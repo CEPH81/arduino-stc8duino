@@ -5,8 +5,8 @@ compilado con **SDCC**. Hecho por [MikrocontrollerCephs](https://www.youtube.com
 Misma organización que el [sduino para IDE 2.x](https://github.com/CEPH81/sduino) (los scripts de
 compilación vienen de allí). No es un producto oficial de STC.
 
-> **Estado: en desarrollo (0.1.0).** Compila para las 5 placas; falta el programa de carga
-> (`stcload`) y probarlo en hardware.
+> **Estado: en desarrollo (0.1.0).** Compila para las 5 placas y el programa de carga
+> (`stcload`) está probado con un simulador del cargador de STC; falta probarlo en hardware.
 
 | Placa | Familia | Flash | RAM (xdata) | ADC |
 |---|---|---|---|---|
@@ -47,6 +47,21 @@ El reloj es el oscilador interno: el programa de carga lo calibra a la frecuenci
 **Reloj** (como STC-ISP). **Reinicio automático**: si el programa usa `Serial` a la velocidad
 elegida en el menú, el cargador envía `@STCISP#` y el chip entra solo en el modo de carga;
 si no, hay que apagar y encender la placa cuando lo pida.
+
+## Instalación de prueba (Windows, sin Gestor de placas)
+
+1. Descomprima `stc8duino-0.1.0-windows-manual.zip` en `Documentos\Arduino\hardware\`
+   (debe quedar `Documentos\Arduino\hardware\stc8duino\stc8\platform.txt`). Trae SDCC.
+2. Reinicie el Arduino IDE: las placas aparecen en **Herramientas → Placa → STC8 Core by MikrocontrollerCephs**.
+
+## Carga (`stcload`)
+
+`tools/stcload` es un programa en Go (Windows y Linux, sin Python) que habla con el cargador de
+la ROM de STC: calibra el oscilador interno, borra, graba y conserva las opciones del chip.
+Es un port del protocolo de [stcgal](https://github.com/grigorig/stcgal) (MIT) para STC15,
+STC8A8K64D4/STC8H (stc8d) y STC8G (stc8g).
+
+Conexión: TX del adaptador USB-serie → **P3.0**, RX → **P3.1**, GND común.
 
 ## Licencias
 

@@ -10,6 +10,10 @@ version=0.1.0
 
 stc.tools.path={runtime.platform.path}/tools
 
+# SDCC: con el Gestor de placas lo pone la herramienta "sdcc" del paquete.
+# En una instalacion manual (hardware/stc8duino/stc8) se busca en tools/sdcc.
+runtime.tools.sdcc.path={runtime.platform.path}/tools/sdcc
+
 # Los scripts .sh se ejecutan con busybox en Windows
 compiler.wrapper.path={stc.tools.path}/wrapper
 compiler.wrapper.path.windows={stc.tools.path}/win/busybox.exe" ash "{stc.tools.path}/wrapper
