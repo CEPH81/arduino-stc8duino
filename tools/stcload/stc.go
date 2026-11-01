@@ -259,14 +259,23 @@ func be16(b []byte) uint16 { return binary.BigEndian.Uint16(b) }
 func (s *stc) iniciar() error {
 	st := s.status
 	s.magia = be16(st[20:22])
-	ok := false
-	for _, m := range s.modelo.magias {
-		if m == s.magia {
-			ok = true
+	var detectado *modelo
+	for i := range modelos {
+		for _, m := range modelos[i].magias {
+			if m == s.magia {
+				detectado = &modelos[i]
+			}
 		}
 	}
-	if !ok {
+	switch {
+	case detectado == nil && s.modelo == nil:
+		return fmt.Errorf("chip STC con codigo %04X: no es ninguno de los modelos soportados (%s)", s.magia, nombres())
+	case detectado == nil:
 		return fmt.Errorf("el chip conectado (codigo %04X) no es un %s: elija la placa correcta", s.magia, s.modelo.nombre)
+	case s.modelo == nil:
+		s.modelo, s.fam = detectado, detectado.familia
+	case detectado != s.modelo:
+		return fmt.Errorf("el chip conectado es un %s, no un %s: elija la placa %s", detectado.nombre, s.modelo.nombre, detectado.nombre)
 	}
 	s.bsl = st[17]
 	if s.fam == "stc15" {

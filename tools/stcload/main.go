@@ -63,8 +63,13 @@ func main() {
 	corte := flag.String("corte", "", "cortar la alimentacion de la placa con la linea rts o dtr del adaptador (circuito de 2 transistores, como stcgal -a)")
 	prog := flag.String("prog", "serie", "programador: serie (adaptador USB-serie) o link1d (STC-USB Link1D, puerto CDC1)")
 	flag.BoolVar(&detalle, "v", false, "mostrar los paquetes")
+	soloInfo := flag.Bool("info", false, "solo probar la conexion: identifica el chip y no graba nada")
 	flag.Parse()
 
+	if *soloInfo {
+		probar(*port, *chip, *resetBaud, *corte, time.Duration(*espera)*time.Second)
+		return
+	}
 	if *port == "" || *chip == "" || *hexf == "" {
 		fail("faltan -port, -chip o -hex (modelos: %s)", nombres())
 	}
@@ -111,6 +116,25 @@ func main() {
 	}
 	s.desconectar()
 	info("Listo: %d bytes grabados, oscilador a %.3f MHz.\n", len(datos), float64(s.trimFreq)/1e6)
+}
+
+// probar: conecta con el cargador de la ROM, muestra el chip y lo deja arrancar su programa.
+func probar(port, chip string, resetBaud int, corte string, espera time.Duration) {
+	if port == "" {
+		fail("falta -port")
+	}
+	s := &stc{hs: 2400, baud: 115200, corte: corte}
+	for i := range modelos {
+		if strings.EqualFold(modelos[i].nombre, chip) {
+			s.modelo, s.fam = &modelos[i], modelos[i].familia
+		}
+	}
+	if err := s.conectar(port, resetBaud, espera); err != nil {
+		fail("%v", err)
+	}
+	info("Codigo del modelo: %04X. Conexion correcta: el adaptador, TX/RX y GND estan bien.\n", s.magia)
+	s.desconectar()
+	s.p.cerrar()
 }
 
 func nombres() string {
