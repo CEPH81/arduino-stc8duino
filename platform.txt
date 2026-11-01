@@ -1,0 +1,89 @@
+# stc8duino - nucleo Arduino para STC8H, STC8G, STC8A y STC15 (SDCC)
+# ------------------------------------------------------------------
+# STC 8051 de MikrocontrollerCephs. Misma organizacion que el sduino
+# para Arduino IDE 2.x de CEPH81 (los scripts de tools/wrapper vienen de alli).
+#
+# Especificacion: https://arduino.github.io/arduino-cli/latest/platform-specification/
+
+name=STC8 Core by MikrocontrollerCephs
+version=0.1.0
+
+stc.tools.path={runtime.platform.path}/tools
+
+# Los scripts .sh se ejecutan con busybox en Windows
+compiler.wrapper.path={stc.tools.path}/wrapper
+compiler.wrapper.path.windows={stc.tools.path}/win/busybox.exe" ash "{stc.tools.path}/wrapper
+
+# Compilador (SDCC 4.3, puerto mcs51)
+# -----------------------------------
+compiler.warning_flags=--less-pedantic
+compiler.warning_flags.none=--less-pedantic
+compiler.warning_flags.default=--less-pedantic
+compiler.warning_flags.more=
+compiler.warning_flags.all=-Wp-Wall
+
+compiler.path={runtime.tools.sdcc.path}/bin/
+build.opt_flags=--opt-code-size
+compiler.c.cmd=sdcc
+compiler.c.wrapper=sdcc.sh
+compiler.common.flags=-mmcs51 --model-large --std-sdcc11 -Ddouble=float -DUSE_STDINT
+compiler.c.flags=-c -MMD {compiler.common.flags} {build.opt_flags} {compiler.warning_flags}
+compiler.cpp.cmd=sdcc
+compiler.cpp.wrapper=sdcc.sh
+compiler.cpp.flags={compiler.c.flags}
+compiler.c.elf.cmd=sdcc
+compiler.c.elf.wrapper=sdcc-link.sh
+compiler.c.elf.flags=-mmcs51 --model-large --code-size {upload.maximum_size} --xram-size {upload.maximum_data_size} --iram-size 256
+compiler.ar.cmd=sdar
+compiler.ar.wrapper=sdar.sh
+compiler.ar.flags=rcs
+compiler.syslibs.stdlib.path={runtime.tools.sdcc.path}/share/sdcc
+compiler.syslibs.stdlib.path.windows={runtime.tools.sdcc.path}
+compiler.systemincludes="-I{compiler.syslibs.stdlib.path}/include"
+
+compiler.c.extra_flags=
+compiler.cpp.extra_flags=
+compiler.c.elf.extra_flags=
+compiler.ar.extra_flags=
+build.extra_flags=
+build.isp_flags=
+
+build.defines=-D{build.family} -D{build.mcu} -DF_CPU={build.f_cpu} {build.isp_flags} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_STC8
+
+# Recetas de compilacion
+# ----------------------
+recipe.c.o.pattern="{compiler.wrapper.path}/{compiler.c.wrapper}" "{compiler.path}{compiler.c.cmd}" "{source_file}" "{object_file}" c {compiler.c.flags} {build.defines} {compiler.c.extra_flags} {build.extra_flags} {includes} {compiler.systemincludes}
+recipe.cpp.o.pattern="{compiler.wrapper.path}/{compiler.cpp.wrapper}" "{compiler.path}{compiler.cpp.cmd}" "{source_file}" "{object_file}" cpp {compiler.cpp.flags} {build.defines} {compiler.cpp.extra_flags} {build.extra_flags} {includes} {compiler.systemincludes}
+recipe.ar.pattern="{compiler.wrapper.path}/{compiler.ar.wrapper}" "{compiler.path}{compiler.ar.cmd}" "{archive_file_path}" "{object_file}" ar {compiler.ar.flags} {compiler.ar.extra_flags}
+
+# Enlace: genera {build.project_name}.ihx/.map/.mem y lo copia a .hex
+recipe.c.combine.pattern="{compiler.wrapper.path}/{compiler.c.elf.wrapper}" "{compiler.path}{compiler.c.elf.cmd}" "{build.path}/{build.project_name}" --nostdlib "-L{build.path}" "-L{compiler.syslibs.stdlib.path}/lib/large" {compiler.c.elf.flags} {compiler.c.elf.extra_flags} {object_files} "{build.path}/{archive_file}" -lmcs51 -llibsdcc -lliblong -lliblonglong -llibint -llibfloat
+
+recipe.output.tmp_file={build.project_name}.hex
+recipe.output.save_file={build.project_name}.{build.variant}.hex
+
+# Tamano: del .mem que escribe el enlazador
+recipe.size.pattern="{compiler.wrapper.path}/sdsize.sh" "{build.path}/{build.project_name}.mem"
+recipe.size.regex=^FLASH\s+([0-9]+)
+recipe.size.regex.data=^RAM\s+([0-9]+)
+
+# Preprocesado (deteccion de librerias y prototipos de funciones)
+preproc.includes.flags=-M -MG -MP
+recipe.preproc.includes="{compiler.wrapper.path}/{compiler.cpp.wrapper}" "{compiler.path}{compiler.cpp.cmd}" "{source_file}" "{preprocessed_file_path}" pre {compiler.common.flags} {preproc.includes.flags} {build.defines} {compiler.cpp.extra_flags} {build.extra_flags} {includes} {compiler.systemincludes}
+# Sin -c ni -MMD: con ellos SDCC escribe la lista de dependencias en vez del
+# codigo preprocesado y el IDE no puede generar los prototipos de funciones.
+preproc.macros.flags=-E -DSTC_PREPROC
+recipe.preproc.macros="{compiler.wrapper.path}/{compiler.cpp.wrapper}" "{compiler.path}{compiler.cpp.cmd}" "{source_file}" "{preprocessed_file_path}" pre {compiler.common.flags} {preproc.macros.flags} {build.defines} {compiler.cpp.extra_flags} {build.extra_flags} {includes} {compiler.systemincludes}
+
+# Carga por el puerto serie (cargador de la ROM de STC)
+# ----------------------------------------------------
+# stcload: si el programa usa Serial, lo reinicia en el modo de carga con
+# "@STCISP#"; si no, pide apagar y encender la placa. Calibra el oscilador
+# interno a la frecuencia del menu "Reloj".
+tools.stcload.path={stc.tools.path}/linux
+tools.stcload.path.windows={stc.tools.path}/win
+tools.stcload.cmd=stcload
+tools.stcload.cmd.windows=stcload.exe
+tools.stcload.upload.params.verbose=-v
+tools.stcload.upload.params.quiet=
+tools.stcload.upload.pattern="{path}/{cmd}" {upload.verbose} -port "{serial.port}" -chip {build.mcu} -freq {build.f_cpu} -resetbaud {upload.reset_baud} -hex "{build.path}/{build.project_name}.hex"
