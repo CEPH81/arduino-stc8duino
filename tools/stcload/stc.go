@@ -58,6 +58,17 @@ func (s *stc) leerN(n int, plazo time.Duration) ([]byte, error) {
 }
 
 func (s *stc) leerPaquete(plazo time.Duration) ([]byte, error) {
+	pk, err := s.leerPaqueteCrudo(plazo)
+	// el cargador puede repetir el paquete de estado (0x50) si le llegan los 0x7F que
+	// quedaban de la sincronizacion: se descarta cuando no es lo que se espera
+	for i := 0; err == nil && i < 4 && len(pk) > 0 && pk[0] == 0x50 && s.status != nil; i++ {
+		depurar("(estado repetido, se descarta)\n")
+		pk, err = s.leerPaqueteCrudo(plazo)
+	}
+	return pk, err
+}
+
+func (s *stc) leerPaqueteCrudo(plazo time.Duration) ([]byte, error) {
 	b, err := s.leerN(1, plazo)
 	if err != nil {
 		return nil, err
@@ -67,17 +78,41 @@ func (s *stc) leerPaquete(plazo time.Duration) ([]byte, error) {
 		// algunos cargadores no envian el inicio de trama con el estado
 		pk = append(pk, inicioPaquete[0], inicioPaquete[1], desdeMCU)
 	} else {
-		if b[0] != inicioPaquete[0] {
-			return nil, errTrama
+		// se salta lo que no sea el inicio de trama 46 B9 68 (eco o restos de la sincronizacion)
+		basura := []byte{}
+		for {
+			if b[0] == inicioPaquete[0] {
+				r, err := s.leerN(1, plazo)
+				if err != nil {
+					return nil, err
+				}
+				if r[0] == inicioPaquete[1] {
+					r2, err := s.leerN(1, plazo)
+					if err != nil {
+						return nil, err
+					}
+					if r2[0] == desdeMCU {
+						break
+					}
+					basura = append(basura, b[0], r[0], r2[0])
+				} else {
+					basura = append(basura, b[0], r[0])
+				}
+			} else {
+				basura = append(basura, b[0])
+			}
+			if len(basura) > 256 {
+				depurar("sin inicio de trama: % X\n", basura[:64])
+				return nil, errTrama
+			}
+			if b, err = s.leerN(1, plazo); err != nil {
+				return nil, err
+			}
 		}
-		r, err := s.leerN(2, plazo)
-		if err != nil {
-			return nil, err
+		if len(basura) > 0 {
+			depurar("bytes descartados antes del paquete: % X\n", basura)
 		}
-		if r[0] != inicioPaquete[1] || r[1] != desdeMCU {
-			return nil, errTrama
-		}
-		pk = append(pk, b[0], r[0], r[1])
+		pk = append(pk, inicioPaquete[0], inicioPaquete[1], desdeMCU)
 	}
 	l, err := s.leerN(2, plazo)
 	if err != nil {
@@ -251,6 +286,9 @@ func (s *stc) conectar(nombre string, resetBaud int, espera time.Duration) error
 		st, err := s.leerEstado()
 		if err == nil && len(st) >= 23 {
 			s.status = st
+			// restos de la rafaga de sincronizacion: se dejan llegar y se descartan
+			time.Sleep(50 * time.Millisecond)
+			p.vaciarEntrada()
 			break
 		}
 		if detalle {
