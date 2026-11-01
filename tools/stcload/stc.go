@@ -130,9 +130,17 @@ func (s *stc) escribirPaquete(datos []byte, epilogo int) {
 func (s *stc) pulso(c byte, plazo time.Duration) error {
 	fin := time.Now().Add(plazo)
 	for {
-		s.p.escribir([]byte{c})
-		s.p.vaciarSalida()
-		time.Sleep(30 * time.Millisecond)
+		if c == 0x7f {
+			// sincronizacion: rafagas de 8 bytes sin pausa (como STC-ISP / STC Web ISP:
+			// con bytes sueltos el cargador tarda mucho en engancharse)
+			s.p.escribir([]byte{c, c, c, c, c, c, c, c})
+			s.p.vaciarSalida()
+			time.Sleep(2 * time.Millisecond)
+		} else {
+			s.p.escribir([]byte{c})
+			s.p.vaciarSalida()
+			time.Sleep(30 * time.Millisecond)
+		}
 		if s.p.pendientes() > 0 {
 			return nil
 		}
@@ -211,8 +219,15 @@ func (s *stc) conectar(nombre string, resetBaud int, espera time.Duration) error
 	} else {
 		info("Esperando al chip: apague y encienda la placa... ")
 	}
+	// el saludo se intenta a 2400 (como stcgal) y a 115200 (como STC-ISP y STC Web ISP,
+	// que es lo que usa el STC-USB Link1D), alternando cada 1,5 s
+	velocidades := []int{2400, 115200}
+	if s.hs != 2400 {
+		velocidades = []int{s.hs}
+	}
+	vi := 0
 	inicio := time.Now()
-	ultimo := inicio
+	ultimo, cambio := inicio, inicio
 	for {
 		if time.Since(inicio) > espera {
 			info("\n")
@@ -222,7 +237,15 @@ func (s *stc) conectar(nombre string, resetBaud int, espera time.Duration) error
 			ultimo = time.Now()
 			reiniciar()
 		}
-		if s.pulso(0x7f, 500*time.Millisecond) != nil {
+		if len(velocidades) > 1 && time.Since(cambio) > 1500*time.Millisecond {
+			cambio = time.Now()
+			vi = (vi + 1) % len(velocidades)
+			s.hs = velocidades[vi]
+			p.velocidad(s.hs)
+			p.vaciarEntrada()
+			depurar("saludo a %d baudios\n", s.hs)
+		}
+		if s.pulso(0x7f, 300*time.Millisecond) != nil {
 			continue
 		}
 		st, err := s.leerEstado()
@@ -230,8 +253,13 @@ func (s *stc) conectar(nombre string, resetBaud int, espera time.Duration) error
 			s.status = st
 			break
 		}
+		if detalle {
+			buf := make([]byte, 64)
+			n := p.leer(buf, 20*time.Millisecond)
+			depurar("a %d baudios llegaron bytes sin formato valido: % X\n", s.hs, buf[:n])
+		}
 	}
-	info("conectado\n")
+	info("conectado a %d baudios\n", s.hs)
 	return s.iniciar()
 }
 

@@ -7,7 +7,7 @@
 #ifndef Pins_Arduino_h
 #define Pins_Arduino_h
 #define NUM_DIGITAL_PINS 64
-#define LED_BUILTIN P3_4   /* LED de la placa STC8H8K64U de Carlos */
+#define LED_BUILTIN P3_4
 #define A0 P1_0
 #define A1 P1_1
 #define A2 P1_2
