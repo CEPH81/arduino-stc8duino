@@ -37,6 +37,7 @@ type stc struct {
 	trimFreq    int     // frecuencia pedida y luego la conseguida, Hz
 	trimValue   [2]byte // ajuste fino, rango
 	trimDivider byte
+	corte       string // "", "rts" o "dtr": linea que corta la alimentacion
 }
 
 // ---------------------------------------------------------------- paquetes
@@ -193,7 +194,19 @@ func (s *stc) conectar(nombre string, resetBaud int, espera time.Duration) error
 	p.velocidad(s.hs)
 	p.vaciarEntrada()
 
-	if resetBaud > 0 {
+	if s.corte != "" {
+		// como stcgal -a: linea activa = alimentacion cortada
+		info("Apagando y encendiendo la placa (%s): ", s.corte)
+		p.lineas(s.corte == "dtr", s.corte == "rts")
+		time.Sleep(500 * time.Millisecond)
+		p.lineas(false, false)
+		time.Sleep(30 * time.Millisecond)
+		info("listo\n")
+	}
+
+	if s.corte != "" {
+		info("Esperando al chip: ")
+	} else if resetBaud > 0 {
 		info("Esperando al chip (reinicio automatico a %d baudios; si no responde, apague y encienda la placa): ", resetBaud)
 	} else {
 		info("Esperando al chip: apague y encienda la placa... ")

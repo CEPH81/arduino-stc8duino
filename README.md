@@ -61,7 +61,19 @@ la ROM de STC: calibra el oscilador interno, borra, graba y conserva las opcione
 Es un port del protocolo de [stcgal](https://github.com/grigorig/stcgal) (MIT) para STC15,
 STC8A8K64D4/STC8H (stc8d) y STC8G (stc8g).
 
-Conexión: TX del adaptador USB-serie → **P3.0**, RX → **P3.1**, GND común.
+Menú **Programador**:
+
+| Opción | Conexión | Cómo entra el chip en modo de carga |
+|---|---|---|
+| Adaptador USB-serie (CH340, CP2102…) | TX → **P3.0**, RX → **P3.1**, GND | reinicio automático (si el programa usa `Serial`) o apagar y encender |
+| **STC-USB Link1D** (puerto CDC1) | S-P3.0 → **P3.0**, S-P3.1 → **P3.1**, GND (y S-Vcc si alimenta la placa) | igual que el adaptador |
+| Adaptador con corte por RTS / DTR | circuito de 2 transistores que corta la alimentación | automático, siempre |
+
+**STC-USB Link1D**: en Windows aparece como varios dispositivos; hay que instalar el driver de sus
+dos puertos CDC desde la unidad de CD virtual que crea. En el IDE elija el puerto **CDC1** (el de
+las patas S-P3.0/S-P3.1); el CDC2 (S-TxD/S-RxD) sirve para un segundo puerto serie. El corte de
+alimentación automático del Link1D solo lo hace STC-ISP (por su interfaz HID, sin documentar):
+con stc8duino se usa el reinicio automático o se apaga y enciende la placa.
 
 ## Licencias
 

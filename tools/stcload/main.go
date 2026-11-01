@@ -60,6 +60,8 @@ func main() {
 	hexf := flag.String("hex", "", "programa (.hex)")
 	baud := flag.Int("baud", 115200, "velocidad de la carga")
 	espera := flag.Int("espera", 60, "segundos de espera al chip")
+	corte := flag.String("corte", "", "cortar la alimentacion de la placa con la linea rts o dtr del adaptador (circuito de 2 transistores, como stcgal -a)")
+	prog := flag.String("prog", "serie", "programador: serie (adaptador USB-serie) o link1d (STC-USB Link1D, puerto CDC1)")
 	flag.BoolVar(&detalle, "v", false, "mostrar los paquetes")
 	flag.Parse()
 
@@ -92,6 +94,13 @@ func main() {
 	}
 
 	s := &stc{fam: m.familia, hs: 2400, baud: *baud, trimFreq: int(freq), modelo: m}
+	if *corte != "" && *corte != "rts" && *corte != "dtr" {
+		fail("-corte debe ser rts o dtr")
+	}
+	s.corte = *corte
+	if *prog == "link1d" {
+		info("Programador STC-USB Link1D: use su puerto CDC1 (patas S-P3.0 y S-P3.1 a P3.0 y P3.1 del chip).\n")
+	}
 	if err := s.conectar(*port, *resetBaud, time.Duration(*espera)*time.Second); err != nil {
 		fail("%v", err)
 	}

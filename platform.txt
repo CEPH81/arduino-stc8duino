@@ -83,11 +83,13 @@ recipe.preproc.macros="{compiler.wrapper.path}/{compiler.cpp.wrapper}" "{compile
 # ----------------------------------------------------
 # stcload: si el programa usa Serial, lo reinicia en el modo de carga con
 # "@STCISP#"; si no, pide apagar y encender la placa. Calibra el oscilador
-# interno a la frecuencia del menu "Reloj".
+# interno a la frecuencia del menu "Reloj". Menu "Programador": adaptador
+# USB-serie, STC-USB Link1D (su puerto CDC1) o un adaptador que corta la
+# alimentacion de la placa con RTS o DTR.
 tools.stcload.path={stc.tools.path}/linux
 tools.stcload.path.windows={stc.tools.path}/win
 tools.stcload.cmd=stcload
 tools.stcload.cmd.windows=stcload.exe
 tools.stcload.upload.params.verbose=-v
 tools.stcload.upload.params.quiet=
-tools.stcload.upload.pattern="{path}/{cmd}" {upload.verbose} -port "{serial.port}" -chip {build.mcu} -freq {build.f_cpu} -resetbaud {upload.reset_baud} -hex "{build.path}/{build.project_name}.hex"
+tools.stcload.upload.pattern="{path}/{cmd}" {upload.verbose} -port "{serial.port}" -chip {build.mcu} -freq {build.f_cpu} -resetbaud {upload.reset_baud} {upload.prog_flags} -hex "{build.path}/{build.project_name}.hex"

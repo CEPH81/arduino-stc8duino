@@ -3,6 +3,7 @@
 menu.clock=Reloj (oscilador interno)
 menu.autoisp=Reinicio automatico para cargar
 menu.opt=Optimizacion
+menu.prog=Programador
 
 ############################################################
 stc8h8k64u.name=STC8H8K64U (LQFP64)
@@ -49,6 +50,15 @@ stc8h8k64u.menu.opt.size=Tamano de codigo (--opt-code-size)
 stc8h8k64u.menu.opt.size.build.opt_flags=--opt-code-size
 stc8h8k64u.menu.opt.speed=Velocidad (--opt-code-speed)
 stc8h8k64u.menu.opt.speed.build.opt_flags=--opt-code-speed
+stc8h8k64u.upload.prog_flags=-prog serie
+stc8h8k64u.menu.prog.serie=Adaptador USB-serie (CH340, CP2102, PL2303...)
+stc8h8k64u.menu.prog.serie.upload.prog_flags=-prog serie
+stc8h8k64u.menu.prog.link1d=STC-USB Link1D (puerto CDC1)
+stc8h8k64u.menu.prog.link1d.upload.prog_flags=-prog link1d
+stc8h8k64u.menu.prog.rts=Adaptador con corte de alimentacion por RTS
+stc8h8k64u.menu.prog.rts.upload.prog_flags=-prog serie -corte rts
+stc8h8k64u.menu.prog.dtr=Adaptador con corte de alimentacion por DTR
+stc8h8k64u.menu.prog.dtr.upload.prog_flags=-prog serie -corte dtr
 
 ############################################################
 stc8a8k64d4.name=STC8A8K64D4 (LQFP48)
@@ -95,6 +105,15 @@ stc8a8k64d4.menu.opt.size=Tamano de codigo (--opt-code-size)
 stc8a8k64d4.menu.opt.size.build.opt_flags=--opt-code-size
 stc8a8k64d4.menu.opt.speed=Velocidad (--opt-code-speed)
 stc8a8k64d4.menu.opt.speed.build.opt_flags=--opt-code-speed
+stc8a8k64d4.upload.prog_flags=-prog serie
+stc8a8k64d4.menu.prog.serie=Adaptador USB-serie (CH340, CP2102, PL2303...)
+stc8a8k64d4.menu.prog.serie.upload.prog_flags=-prog serie
+stc8a8k64d4.menu.prog.link1d=STC-USB Link1D (puerto CDC1)
+stc8a8k64d4.menu.prog.link1d.upload.prog_flags=-prog link1d
+stc8a8k64d4.menu.prog.rts=Adaptador con corte de alimentacion por RTS
+stc8a8k64d4.menu.prog.rts.upload.prog_flags=-prog serie -corte rts
+stc8a8k64d4.menu.prog.dtr=Adaptador con corte de alimentacion por DTR
+stc8a8k64d4.menu.prog.dtr.upload.prog_flags=-prog serie -corte dtr
 
 ############################################################
 stc8g1k08.name=STC8G1K08 (TSSOP20)
@@ -141,6 +160,15 @@ stc8g1k08.menu.opt.size=Tamano de codigo (--opt-code-size)
 stc8g1k08.menu.opt.size.build.opt_flags=--opt-code-size
 stc8g1k08.menu.opt.speed=Velocidad (--opt-code-speed)
 stc8g1k08.menu.opt.speed.build.opt_flags=--opt-code-speed
+stc8g1k08.upload.prog_flags=-prog serie
+stc8g1k08.menu.prog.serie=Adaptador USB-serie (CH340, CP2102, PL2303...)
+stc8g1k08.menu.prog.serie.upload.prog_flags=-prog serie
+stc8g1k08.menu.prog.link1d=STC-USB Link1D (puerto CDC1)
+stc8g1k08.menu.prog.link1d.upload.prog_flags=-prog link1d
+stc8g1k08.menu.prog.rts=Adaptador con corte de alimentacion por RTS
+stc8g1k08.menu.prog.rts.upload.prog_flags=-prog serie -corte rts
+stc8g1k08.menu.prog.dtr=Adaptador con corte de alimentacion por DTR
+stc8g1k08.menu.prog.dtr.upload.prog_flags=-prog serie -corte dtr
 
 ############################################################
 stc15w4k56s4.name=STC15W4K56S4 (LQFP48)
@@ -187,6 +215,15 @@ stc15w4k56s4.menu.opt.size=Tamano de codigo (--opt-code-size)
 stc15w4k56s4.menu.opt.size.build.opt_flags=--opt-code-size
 stc15w4k56s4.menu.opt.speed=Velocidad (--opt-code-speed)
 stc15w4k56s4.menu.opt.speed.build.opt_flags=--opt-code-speed
+stc15w4k56s4.upload.prog_flags=-prog serie
+stc15w4k56s4.menu.prog.serie=Adaptador USB-serie (CH340, CP2102, PL2303...)
+stc15w4k56s4.menu.prog.serie.upload.prog_flags=-prog serie
+stc15w4k56s4.menu.prog.link1d=STC-USB Link1D (puerto CDC1)
+stc15w4k56s4.menu.prog.link1d.upload.prog_flags=-prog link1d
+stc15w4k56s4.menu.prog.rts=Adaptador con corte de alimentacion por RTS
+stc15w4k56s4.menu.prog.rts.upload.prog_flags=-prog serie -corte rts
+stc15w4k56s4.menu.prog.dtr=Adaptador con corte de alimentacion por DTR
+stc15w4k56s4.menu.prog.dtr.upload.prog_flags=-prog serie -corte dtr
 
 ############################################################
 stc15f2k60s2.name=STC15F2K60S2 (LQFP44)
@@ -233,4 +270,13 @@ stc15f2k60s2.menu.opt.size=Tamano de codigo (--opt-code-size)
 stc15f2k60s2.menu.opt.size.build.opt_flags=--opt-code-size
 stc15f2k60s2.menu.opt.speed=Velocidad (--opt-code-speed)
 stc15f2k60s2.menu.opt.speed.build.opt_flags=--opt-code-speed
+stc15f2k60s2.upload.prog_flags=-prog serie
+stc15f2k60s2.menu.prog.serie=Adaptador USB-serie (CH340, CP2102, PL2303...)
+stc15f2k60s2.menu.prog.serie.upload.prog_flags=-prog serie
+stc15f2k60s2.menu.prog.link1d=STC-USB Link1D (puerto CDC1)
+stc15f2k60s2.menu.prog.link1d.upload.prog_flags=-prog link1d
+stc15f2k60s2.menu.prog.rts=Adaptador con corte de alimentacion por RTS
+stc15f2k60s2.menu.prog.rts.upload.prog_flags=-prog serie -corte rts
+stc15f2k60s2.menu.prog.dtr=Adaptador con corte de alimentacion por DTR
+stc15f2k60s2.menu.prog.dtr.upload.prog_flags=-prog serie -corte dtr
 
