@@ -48,11 +48,15 @@ El reloj es el oscilador interno: el programa de carga lo calibra a la frecuenci
 elegida en el menú, el cargador envía `@STCISP#` y el chip entra solo en el modo de carga;
 si no, hay que apagar y encender la placa cuando lo pida.
 
-## Instalación de prueba (Windows, sin Gestor de placas)
+## Instalación (Gestor de placas, Arduino IDE 2.x)
 
-1. Descomprima `stc8duino-0.1.0-windows-manual.zip` en `Documentos\Arduino\hardware\`
-   (debe quedar `Documentos\Arduino\hardware\stc8duino\stc8\platform.txt`). Trae SDCC.
-2. Reinicie el Arduino IDE: las placas aparecen en **Herramientas → Placa → STC8 Core by MikrocontrollerCephs**.
+1. **Archivo → Preferencias → URLs adicionales del gestor de placas**:
+   ```
+   https://raw.githubusercontent.com/CEPH81/arduino-stc8duino/main/package_stc8duino_index.json
+   ```
+2. **Herramientas → Placa → Gestor de placas**, busque **STC8 Core** e instale.
+   Se descarga también SDCC 4.3 (mcs51) para Windows o Linux.
+3. Las placas aparecen en **Herramientas → Placa → STC8 Core by MikrocontrollerCephs**.
 
 ## Carga (`stcload`)
 

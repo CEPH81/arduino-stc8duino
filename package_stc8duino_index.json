@@ -1,0 +1,81 @@
+{
+  "packages": [
+    {
+      "name": "stc8duino",
+      "maintainer": "MikrocontrollerCephs (CEPH81)",
+      "websiteURL": "https://github.com/CEPH81/arduino-stc8duino",
+      "email": "",
+      "help": {
+        "online": "https://github.com/CEPH81/arduino-stc8duino"
+      },
+      "platforms": [
+        {
+          "name": "STC8 Core by MikrocontrollerCephs",
+          "architecture": "stc8",
+          "version": "0.1.0",
+          "category": "Contributed",
+          "url": "https://raw.githubusercontent.com/CEPH81/arduino-stc8duino/paquetes/stc8duino-0.1.0.tar.bz2",
+          "archiveFileName": "stc8duino-0.1.0.tar.bz2",
+          "checksum": "SHA-256:d1cf080dabf68940a6d596802ab0e73ae0d329a3b80ddd814d569e3d88d38f02",
+          "size": "1868481",
+          "help": {
+            "online": "https://github.com/CEPH81/arduino-stc8duino"
+          },
+          "boards": [
+            {
+              "name": "STC8H8K64U (LQFP64)"
+            },
+            {
+              "name": "STC8A8K64D4 (LQFP48)"
+            },
+            {
+              "name": "STC8G1K08 (TSSOP20)"
+            },
+            {
+              "name": "STC15W4K56S4 (LQFP48)"
+            },
+            {
+              "name": "STC15F2K60S2 (LQFP44)"
+            }
+          ],
+          "toolsDependencies": [
+            {
+              "packager": "stc8duino",
+              "name": "sdcc",
+              "version": "build.14184_2"
+            }
+          ]
+        }
+      ],
+      "tools": [
+        {
+          "name": "sdcc",
+          "version": "build.14184_2",
+          "systems": [
+            {
+              "host": "x86_64-pc-linux-gnu",
+              "url": "https://github.com/DeqingSun/ch55xduino/releases/download/0.0.18/sdcc-mcs51-amd64-unknown-linux2.5-20230702-14184_2.tar.bz2",
+              "archiveFileName": "sdcc-mcs51-amd64-unknown-linux2.5-20230702-14184_2.tar.bz2",
+              "checksum": "SHA-256:0beeccaa9c5c16bf542385d323021c2d5bde890160299871f6a52c89f9cdfaf2",
+              "size": "3306990"
+            },
+            {
+              "host": "i686-mingw32",
+              "url": "https://github.com/DeqingSun/ch55xduino/releases/download/0.0.18/sdcc-mcs51-i586-mingw32msvc-20230702-14184_2.tar.bz2",
+              "archiveFileName": "sdcc-mcs51-i586-mingw32msvc-20230702-14184_2.tar.bz2",
+              "checksum": "SHA-256:1d4313cad00e11c0b454c7dd24a2cccb27df9c23029701651271cc89924aaffc",
+              "size": "5040777"
+            },
+            {
+              "host": "aarch64-linux-gnu",
+              "url": "https://github.com/DeqingSun/ch55xduino/releases/download/0.0.18/sdcc-mcs51-aarch64-linux-gnu-20230701-14184_2.tar.bz2",
+              "archiveFileName": "sdcc-mcs51-aarch64-linux-gnu-20230701-14184_2.tar.bz2",
+              "checksum": "SHA-256:4459b7d3e6c690a91a4ea4ac5f8915c390d4b9ada7e9dac4be45e8865b28c569",
+              "size": "3283863"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
