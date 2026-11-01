@@ -24,6 +24,8 @@ import (
 
 var detalle bool
 
+const version = "0.1.4"
+
 func fail(f string, a ...interface{}) {
 	fmt.Fprintf(os.Stderr, "Error: "+f+"\n", a...)
 	os.Exit(1)
@@ -61,14 +63,24 @@ func main() {
 	baud := flag.Int("baud", 115200, "velocidad de la carga")
 	espera := flag.Int("espera", 60, "segundos de espera al chip")
 	corte := flag.String("corte", "", "cortar la alimentacion de la placa con la linea rts o dtr del adaptador (circuito de 2 transistores, como stcgal -a)")
-	prog := flag.String("prog", "serie", "programador: serie (adaptador USB-serie) o link1d (STC-USB Link1D, puerto CDC1)")
+	prog := flag.String("prog", "serie", "programador: serie (adaptador USB-serie), link1d (STC-USB Link1D, puerto CDC) o aicube (AiCube-ISP oficial con el Link1D, solo Windows)")
+	modo := flag.String("modo", "auto", "oscilador: auto (ajusta solo si el chip no esta a la frecuencia pedida), directo (no lo toca, como STC Web ISP) o ajuste (lo calibra siempre, como stcgal)")
+	aicube := flag.String("aicube", "", "ruta de AiCube-ISP*.exe (por defecto se busca)")
 	flag.BoolVar(&detalle, "v", false, "mostrar los paquetes")
 	soloInfo := flag.Bool("info", false, "solo probar la conexion: identifica el chip y no graba nada")
 	flag.Parse()
 
+	depurar("stcload %s\n", version)
 	if *soloInfo {
 		probar(*port, *chip, *resetBaud, *corte, time.Duration(*espera)*time.Second)
 		return
+	}
+	if *prog == "aicube" {
+		cargarAiCube(*aicube, *chip, *hexf)
+		return
+	}
+	if *modo != "auto" && *modo != "directo" && *modo != "ajuste" {
+		fail("-modo debe ser auto, directo o ajuste")
 	}
 	if *port == "" || *chip == "" || *hexf == "" {
 		fail("faltan -port, -chip o -hex (modelos: %s)", nombres())
@@ -98,13 +110,13 @@ func main() {
 		datos = append(datos, relleno(512-len(datos)%512)...)
 	}
 
-	s := &stc{fam: m.familia, hs: 2400, baud: *baud, trimFreq: int(freq), modelo: m}
+	s := &stc{fam: m.familia, hs: 2400, baud: *baud, trimFreq: int(freq), modelo: m, modo: *modo}
 	if *corte != "" && *corte != "rts" && *corte != "dtr" {
 		fail("-corte debe ser rts o dtr")
 	}
 	s.corte = *corte
 	if *prog == "link1d" {
-		info("Programador STC-USB Link1D: use su puerto CDC1 (patas S-P3.0 y S-P3.1 a P3.0 y P3.1 del chip).\n")
+		info("Programador STC-USB Link1D: use su puerto CDC (el que usa STC Web ISP).\n")
 	}
 	if err := s.conectar(*port, *resetBaud, time.Duration(*espera)*time.Second); err != nil {
 		fail("%v", err)
@@ -115,7 +127,7 @@ func main() {
 		fail("%v", err)
 	}
 	s.desconectar()
-	info("Listo: %d bytes grabados, oscilador a %.3f MHz.\n", len(datos), float64(s.trimFreq)/1e6)
+	info("stcload %s - Listo: %d bytes grabados, oscilador a %.3f MHz.\n", version, len(datos), float64(s.trimFreq)/1e6)
 }
 
 // probar: conecta con el cargador de la ROM, muestra el chip y lo deja arrancar su programa.

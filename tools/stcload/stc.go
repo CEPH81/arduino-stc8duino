@@ -38,6 +38,8 @@ type stc struct {
 	trimValue   [2]byte // ajuste fino, rango
 	trimDivider byte
 	corte       string // "", "rts" o "dtr": linea que corta la alimentacion
+	directo     bool
+	modo        string // "auto", "directo" (sin ajustar el oscilador, como STC Web ISP) o "ajuste"
 }
 
 // ---------------------------------------------------------------- paquetes
@@ -256,10 +258,12 @@ func (s *stc) conectar(nombre string, resetBaud int, espera time.Duration) error
 	}
 	// el saludo se intenta a 2400 (como stcgal) y a 115200 (como STC-ISP y STC Web ISP,
 	// que es lo que usa el STC-USB Link1D), alternando cada 1,5 s
-	velocidades := []int{2400, 115200}
-	if s.hs != 2400 {
-		velocidades = []int{s.hs}
+	velocidades := []int{115200, 2400}
+	if s.modo == "ajuste" {
+		velocidades = []int{2400, 115200}
 	}
+	s.hs = velocidades[0]
+	p.velocidad(s.hs)
 	vi := 0
 	inicio := time.Now()
 	ultimo, cambio := inicio, inicio
@@ -287,7 +291,8 @@ func (s *stc) conectar(nombre string, resetBaud int, espera time.Duration) error
 		if err == nil && len(st) >= 23 {
 			s.status = st
 			// restos de la rafaga de sincronizacion: se dejan llegar y se descartan
-			time.Sleep(50 * time.Millisecond)
+			// (poco tiempo: el cargador espera la orden 0x01 solo unos cientos de ms)
+			time.Sleep(5 * time.Millisecond)
 			p.vaciarEntrada()
 			break
 		}
@@ -633,6 +638,10 @@ func (s *stc) clave() []byte {
 }
 
 func (s *stc) grabar(datos []byte) error {
+	if !s.necesitaAjuste() {
+		s.directo = true
+		return s.grabarDirecto(datos)
+	}
 	var err error
 	switch {
 	case s.fam == "stc15" && s.externo:
@@ -761,7 +770,7 @@ func (s *stc) desconectar() {
 	if s.p == nil {
 		return
 	}
-	if s.fam == "stc15" {
+	if s.fam == "stc15" || s.directo {
 		s.escribirPaquete([]byte{0x82}, 0)
 	} else {
 		s.escribirPaquete([]byte{0xff}, 0)
