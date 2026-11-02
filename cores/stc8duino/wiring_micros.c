@@ -21,6 +21,61 @@ static unsigned int leer_t0(void)
 	return ((unsigned int)h << 8) | l;
 }
 
+/* microsegundos dentro del milisegundo: t * 1000 / T0_TICKS sin dividir.
+ * Se calcula (t * K) >> 16 con K = 65536000 / T0_TICKS usando solo
+ * multiplicaciones de 8 x 8 bits (la instruccion MUL AB del 8051). */
+#define US_K  ((unsigned int)((65536000UL + T0_TICKS / 2) / T0_TICKS))
+#define US_KL ((uint8_t)(US_K & 0xFF))
+#define US_KH ((uint8_t)(US_K >> 8))
+
+static __data uint8_t us_kl = US_KL, us_kh = US_KH;
+
+/* devuelve los 16 bits altos de t * K (entrada y salida en dpl/dph) */
+static unsigned int mul_k_alto(unsigned int t) __naked
+{
+	(void) t;
+	__asm
+	mov	a,dpl
+	mov	b,_us_kl
+	mul	ab              ; tl*kl
+	mov	r2,b
+	mov	a,dpl
+	mov	b,_us_kh
+	mul	ab              ; tl*kh
+	add	a,r2
+	mov	r2,a
+	clr	a
+	addc	a,b
+	mov	r3,a
+	mov	r4,#0
+	mov	a,dph
+	mov	b,_us_kl
+	mul	ab              ; th*kl
+	add	a,r2
+	mov	a,b
+	addc	a,r3
+	mov	r3,a
+	clr	a
+	addc	a,r4
+	mov	r4,a
+	mov	a,dph
+	mov	b,_us_kh
+	mul	ab              ; th*kh
+	add	a,r3
+	mov	dpl,a
+	mov	a,b
+	addc	a,r4
+	mov	dph,a
+	ret
+	__endasm;
+}
+
+static unsigned int frac_us(unsigned int t)
+{
+	__data unsigned int d = mul_k_alto(t);
+	return d > 999 ? 999 : d;
+}
+
 unsigned long micros(void)
 {
 	__data unsigned long u;
@@ -32,13 +87,7 @@ unsigned long micros(void)
 	/* desborde que la interrupcion aun no atendio */
 	if (TF0 && t < (unsigned int)(T0_RELOAD + T0_TICKS / 2)) u += 1000;
 	ET0 = 1;
-	t -= T0_RELOAD;                       /* cuentas dentro del milisegundo */
-#if (F_CPU % 1000000UL) == 0
-	t /= (unsigned int)(F_CPU / 1000000UL);
-#else
-	t = (unsigned int)(((unsigned long)t * 1000UL) / T0_TICKS);
-#endif
-	return u + t;
+	return u + frac_us(t - T0_RELOAD);    /* cuentas dentro del milisegundo -> us */
 }
 
 /* espera de us microsegundos. Todo en 16 bits y con las variables en la RAM
