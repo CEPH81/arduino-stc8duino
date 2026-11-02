@@ -165,6 +165,8 @@ void digitalToggle(uint8_t pin);
 
 int analogRead(uint8_t pin);
 void analogReadResolution(uint8_t bits);
+/* PWM de 0 a 255 (STC8H: patas de PWM5-PWM8, ver wiring_pwm.c) */
+void analogWrite(uint8_t pin, int val);
 
 unsigned long millis(void);
 unsigned long micros(void);
