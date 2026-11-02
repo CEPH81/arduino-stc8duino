@@ -1,13 +1,15 @@
 /*
- * PruebaPWM - analogWrite() en P3.4 (PWM8) con valores fijos para medirlos con el
- * osciloscopio. La frecuencia debe ser de unos 1000 Hz y el ancho del pulso en
- * alto, valor/256 del periodo (unos 3,9 us por unidad):
- *   0 -> siempre en bajo   64 -> 25 %   128 -> 50 %   192 -> 75 %   255 -> siempre en alto
+ * PruebaPWM - analogWrite() en P3.4 (PWM8, el LED de la STC8H8K64U) con valores fijos.
+ *
+ * Los valores 0, 4, 16, 64 y 255 se distinguen bien a ojo (el ojo nota mas los
+ * cambios en valores bajos). Para medir con el osciloscopio: la frecuencia debe
+ * ser de unos 1000 Hz y el pulso en alto, valor/256 del periodo (unos 3,9 us
+ * por unidad; 255 = siempre en alto).
  * Cada valor dura 3 s y se anuncia por el monitor serie (115200 baudios).
  */
 #define PATA P3_4
 
-const int valores[] = { 0, 64, 128, 192, 255 };
+const int valores[] = { 0, 4, 16, 64, 255 };
 
 void setup() {
   Serial.begin(115200);
@@ -20,9 +22,9 @@ void loop() {
     analogWrite(PATA, valores[i]);
     Serial.print("analogWrite(P3_4, ");
     Serial.print(valores[i]);
-    Serial.print(")  ciclo de trabajo ");
-    Serial.print((long)valores[i] * 100 / 256);
-    Serial.println(" %");
+    Serial.print(")  pulso en alto ");
+    Serial.print((long)valores[i] * 3906 / 1000);
+    Serial.println(" us de 1000");
     delay(3000);
   }
 }
