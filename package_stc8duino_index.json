@@ -12,12 +12,12 @@
         {
           "name": "STC8 Core by MikrocontrollerCephs",
           "architecture": "stc8",
-          "version": "0.1.13",
+          "version": "0.1.14",
           "category": "Contributed",
-          "url": "https://raw.githubusercontent.com/CEPH81/arduino-stc8duino/paquetes/stc8duino-0.1.13.tar.bz2",
-          "archiveFileName": "stc8duino-0.1.13.tar.bz2",
-          "checksum": "SHA-256:4e377a77cd2ee7b676851106156de99c6f808322d712647838c98101a9e08ff6",
-          "size": "1879416",
+          "url": "https://raw.githubusercontent.com/CEPH81/arduino-stc8duino/paquetes/stc8duino-0.1.14.tar.bz2",
+          "archiveFileName": "stc8duino-0.1.14.tar.bz2",
+          "checksum": "SHA-256:1b2d44f15fc675638d8d841bc8529b008d82b3444b796349ede0ee48e5c5d450",
+          "size": "1879387",
           "help": {
             "online": "https://github.com/CEPH81/arduino-stc8duino"
           },
