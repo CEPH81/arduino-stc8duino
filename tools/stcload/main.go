@@ -24,7 +24,7 @@ import (
 
 var detalle bool
 
-const version = "0.1.4"
+const version = "0.1.5"
 
 func fail(f string, a ...interface{}) {
 	fmt.Fprintf(os.Stderr, "Error: "+f+"\n", a...)

@@ -50,9 +50,20 @@ func cargarAiCube(ruta, chip, hexf string) {
 	if ruta == "" {
 		fail("no se encontro AiCube-ISP*.exe. Descarguelo de www.stcai.com y dejelo en el Escritorio, en Descargas o en C:\\STC, o indique su ruta en la variable de entorno STC8DUINO_AICUBE")
 	}
+	hexf, err := filepath.Abs(hexf)
+	if err != nil {
+		fail("%v", err)
+	}
+	if _, err := os.Stat(hexf); err != nil {
+		fail("no existe el programa compilado %s", hexf)
+	}
+	info("Programa: %s\n", hexf)
 	info("Cargando con %s por el Link1D (HID).\n", ruta)
 	info("Si no arranca solo, apague y encienda la placa.\n")
 	cmd := exec.Command(ruta, "-port=Link1D", "-mcu="+chip, "-codefile="+hexf)
+	lineaAiCube(cmd, ruta, chip, hexf)
+	cmd.Dir = filepath.Dir(ruta) // AiCube busca sus archivos de configuracion junto al .exe
+	depurar("orden: %s -port=Link1D -mcu=%s -codefile=\"%s\"\n", ruta, chip, hexf)
 	cmd.Stdout, cmd.Stderr, cmd.Stdin = os.Stdout, os.Stderr, os.Stdin
 	if err := cmd.Run(); err != nil {
 		fail("AiCube-ISP termino con error: %v", err)
