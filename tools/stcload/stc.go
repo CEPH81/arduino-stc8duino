@@ -38,6 +38,8 @@ type stc struct {
 	trimValue   [2]byte // ajuste fino, rango
 	trimDivider byte
 	corte       string // "", "rts" o "dtr": linea que corta la alimentacion
+
+	relojGuardado bool // la frecuencia real quedo escrita en el programa
 }
 
 // ---------------------------------------------------------------- paquetes
@@ -656,6 +658,9 @@ func (s *stc) grabar(datos []byte) error {
 	}
 	if err != nil {
 		return err
+	}
+	if !(s.fam == "stc15" && s.externo) {
+		s.relojGuardado = parchearReloj(datos, s.trimFreq)
 	}
 
 	pk := []byte{0x05}

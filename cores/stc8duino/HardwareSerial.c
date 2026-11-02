@@ -4,12 +4,13 @@
  * Parte de stc8duino. LGPL 2.1.
  */
 #include "Arduino.h"
+#include "wiring_private.h"
 
 #include "serial_private.h"
 
 void HardwareSerial_begin_config(unsigned long baud, uint8_t config)
 {
-	unsigned int reload = (unsigned int)(65536UL - (F_CPU / 4 + baud / 2) / baud);
+	unsigned int reload = (unsigned int)(65536UL - (STC_FREQ() / 4 + baud / 2) / baud);
 	(void) config;
 
 	ES = 0;

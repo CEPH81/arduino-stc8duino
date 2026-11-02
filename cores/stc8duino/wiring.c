@@ -2,7 +2,8 @@
  * wiring.c - init(), millis() y delay().
  *
  * El temporizador 0 (modo 1T, 16 bits con recarga automatica) interrumpe cada
- * milisegundo. F_CPU es la frecuencia del menu "Reloj" (la que deja el cargador).
+ * milisegundo. La frecuencia sale de stc_reloj (ver wiring_private.h): la del
+ * menu "Reloj" corregida por stcload con la que consiguio al grabar.
  *
  * Los contadores van en la RAM interna (__data): la interrupcion solo usa el
  * acumulador y dura alrededor de 1 us a 24 MHz.
@@ -11,6 +12,20 @@
  */
 #include "Arduino.h"
 #include "wiring_private.h"
+
+/* valores con F_CPU; stcload los cambia por los de la frecuencia real */
+#define R_TICKS ((unsigned long)(F_CPU / 1000UL))
+#define R_K     ((65536000UL + R_TICKS / 2) / R_TICKS)
+__code volatile const uint8_t stc_reloj[13] = {
+	'S', 'T', 'C', 'F',
+	(uint8_t)(F_CPU), (uint8_t)(F_CPU >> 8), (uint8_t)(F_CPU >> 16), (uint8_t)(F_CPU >> 24),
+	(uint8_t)R_TICKS, (uint8_t)(R_TICKS >> 8),
+	(uint8_t)((F_CPU + 500000UL) / 1000000UL),
+	(uint8_t)R_K, (uint8_t)(R_K >> 8)
+};
+
+__data unsigned int stc_t0_ticks, stc_t0_reload;
+__data uint8_t stc_t0_tpu, us_kl, us_kh;
 
 volatile __data unsigned long stc_ms_count;   /* milisegundos */
 volatile __data unsigned long stc_us_count;   /* microsegundos al inicio del milisegundo actual */
@@ -55,6 +70,12 @@ void init(void)
 #ifdef STC8
 	P_SW2 |= 0x80;          /* acceso a los registros extendidos */
 #endif
+	stc_t0_ticks = stc_reloj[8] | ((unsigned int)stc_reloj[9] << 8);
+	stc_t0_reload = 0 - stc_t0_ticks;
+	stc_t0_tpu = stc_reloj[10];
+	us_kl = stc_reloj[11];
+	us_kh = stc_reloj[12];
+
 	TR0 = 0;
 	TMOD &= 0xF0;           /* T0 modo 0: 16 bits con recarga */
 	AUXR |= AUXR_T0x12;     /* 1T: cuenta a F_CPU */

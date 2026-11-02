@@ -22,13 +22,8 @@ static unsigned int leer_t0(void)
 }
 
 /* microsegundos dentro del milisegundo: t * 1000 / T0_TICKS sin dividir.
- * Se calcula (t * K) >> 16 con K = 65536000 / T0_TICKS usando solo
- * multiplicaciones de 8 x 8 bits (la instruccion MUL AB del 8051). */
-#define US_K  ((unsigned int)((65536000UL + T0_TICKS / 2) / T0_TICKS))
-#define US_KL ((uint8_t)(US_K & 0xFF))
-#define US_KH ((uint8_t)(US_K >> 8))
-
-static __data uint8_t us_kl = US_KL, us_kh = US_KH;
+ * Se calcula (t * K) >> 16 con K = 65536000 / T0_TICKS (us_kh:us_kl, que pone
+ * init()) usando solo multiplicaciones de 8 x 8 bits (MUL AB del 8051). */
 
 /* devuelve los 16 bits altos de t * K (entrada y salida en dpl/dph) */
 static unsigned int mul_k_alto(unsigned int t) __naked

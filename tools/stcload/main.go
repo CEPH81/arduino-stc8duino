@@ -116,6 +116,9 @@ func main() {
 	}
 	s.desconectar()
 	info("Listo: %d bytes grabados, oscilador a %.3f MHz.\n", len(datos), float64(s.trimFreq)/1e6)
+	if s.relojGuardado {
+		info("millis(), micros() y Serial usan la frecuencia real (%.3f MHz) y no la del menu.\n", float64(s.trimFreq)/1e6)
+	}
 }
 
 // probar: conecta con el cargador de la ROM, muestra el chip y lo deja arrancar su programa.
