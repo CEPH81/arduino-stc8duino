@@ -77,11 +77,40 @@ unsigned long millis(void)
 	return m;
 }
 
+/* espera ms milisegundos exactos desde la llamada: cuenta milisegundos enteros
+ * y despues espera a que el temporizador llegue a la misma posicion dentro del
+ * milisegundo en que empezo (con solo millis() podia quedar hasta 1 ms corto) */
+static __data unsigned long d_m;
+static __data unsigned int d_t;
+
+/* lectura coherente del contador de ms y del temporizador 0 (en d_m y d_t) */
+static void leer_ms_t0(void)
+{
+	__data uint8_t h, l;
+	ET0 = 0;
+	do {
+		h = TH0;
+		l = TL0;
+	} while (h != TH0);
+	d_t = ((unsigned int)h << 8) | l;
+	d_m = stc_ms_count;
+	/* desborde que la interrupcion aun no atendio */
+	if (TF0 && d_t < (unsigned int)(T0_RELOAD + T0_TICKS / 2)) d_m++;
+	ET0 = 1;
+}
+
 void delay(unsigned long ms)
 {
-	__data unsigned long start;
+	__data unsigned long fin;
+	__data unsigned int t0;
+
 	if (ms == 0) return;
-	start = millis();
-	while (millis() - start < ms)
-		;
+	leer_ms_t0();
+	fin = d_m + ms;
+	t0 = d_t;
+	do {
+		leer_ms_t0();
+	} while ((long)(d_m - fin) < 0);
+	while (d_m == fin && d_t < t0)
+		leer_ms_t0();
 }
