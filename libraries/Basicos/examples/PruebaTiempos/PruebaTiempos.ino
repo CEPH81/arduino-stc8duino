@@ -2,6 +2,9 @@
  * PruebaTiempos - comprueba millis(), micros(), delay() y delayMicroseconds()
  * por el monitor serie (115200 baudios).
  *
+ * Cada medicion incluye lo que tarda una llamada a micros(): la primera linea
+ * ("micros() solo") muestra ese tiempo, que hay que restar a las demas.
+ *
  * Despues de cada medicion saca por P1_1 una onda de unos 1 kHz durante 1 s
  * (500 us en alto y 500 us en bajo) para medirla con el osciloscopio.
  */
@@ -24,6 +27,9 @@ void setup() {
 void loop() {
   unsigned long t0, t1;
   unsigned int i;
+
+  t0 = micros(); t1 = micros();
+  medir("micros() solo (se resta a las demas)", t0, t1);
 
   t0 = micros(); delay(100); t1 = micros();
   medir("delay(100), esperado 100000", t0, t1);

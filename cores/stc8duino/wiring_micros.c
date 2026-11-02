@@ -41,20 +41,37 @@ unsigned long micros(void)
 	return u + t;
 }
 
-/* espera de us microsegundos (unos 2 us de margen en las esperas muy cortas) */
+/* espera de us microsegundos. Todo en 16 bits y con las variables en la RAM
+ * interna: se cuenta el temporizador 0 por tramos de hasta 1000 us. */
+#define LEER_T0(v) do { \
+		__data uint8_t h_, l_; \
+		do { h_ = TH0; l_ = TL0; } while (h_ != TH0); \
+		v = ((unsigned int)h_ << 8) | l_; \
+	} while (0)
+
 void delayMicroseconds(unsigned int us)
 {
-	__data unsigned int prev, now;
-	__data unsigned long falta, hecho;
+	__data unsigned int prev, now, falta, hecho, n;
 
-	prev = leer_t0();
-	if (us <= 1) return;                  /* la llamada ya tarda alrededor de 1 us */
-	falta = (unsigned long)(us - 1) * T0_TPU;
-	hecho = 0;
-	while (hecho < falta) {
-		now = leer_t0();
-		/* el temporizador va de T0_RELOAD a 65535 y vuelve a T0_RELOAD */
-		hecho += (unsigned int)(now >= prev ? now - prev : now - prev - T0_RELOAD);
-		prev = now;
+	LEER_T0(prev);
+	n = us;
+	if (n <= 2) return;                   /* la llamada ya tarda alrededor de 2 us */
+	n -= 2;
+	while (n) {
+		if (n > 1000) {
+			falta = 1000 * T0_TPU;
+			n -= 1000;
+		} else {
+			falta = n * T0_TPU;
+			n = 0;
+		}
+		hecho = 0;
+		while (hecho < falta) {
+			LEER_T0(now);
+			/* el temporizador va de T0_RELOAD a 65535 y vuelve a T0_RELOAD */
+			hecho += (now >= prev) ? now - prev : now - prev - T0_RELOAD;
+			prev = now;
+		}
+		prev -= hecho - falta;            /* lo que se paso cuenta para el tramo siguiente */
 	}
 }
