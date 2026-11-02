@@ -173,6 +173,9 @@ unsigned long micros(void);
 void delay(unsigned long ms);
 void delayMicroseconds(unsigned int us);
 
+/* interrupciones externas: 0 = INT0 (P3.2), 1 = INT1 (P3.3) */
+#define digitalPinToInterrupt(p) ((p) == P3_2 ? 0 : (p) == P3_3 ? 1 : 255)
+#define NOT_AN_INTERRUPT 255
 void attachInterrupt(uint8_t num, void (*func)(void), uint8_t mode);
 void detachInterrupt(uint8_t num);
 
