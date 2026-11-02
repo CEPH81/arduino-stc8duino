@@ -51,8 +51,17 @@
 
 void printNL(void);
 
-// Las variantes que no usa Serial.print() estan en Print-extra.c (solo se
-// enlazan si se llaman directamente). stc8duino.
+// Public Methods //////////////////////////////////////////////////////////////
+
+size_t Print_print_sn(writefunc_p writefunc, const uint8_t *buffer, size_t size)
+{
+  size_t n = 0;
+  while (size--) {
+    if (writefunc(*buffer++)) n++;
+    else break;
+  }
+  return n;
+}
 
 size_t Print_print_s(writefunc_p writefunc, const char *str)
 {
@@ -68,6 +77,71 @@ size_t Print_print_s(writefunc_p writefunc, const char *str)
 	return n;
 }
 
+
+size_t Print_print_u(writefunc_p writefunc, unsigned long n)
+{
+	return printNumber(writefunc, n,10);
+}
+
+size_t Print_print_i(writefunc_p writefunc, long n)
+{
+	return printInt(writefunc, n,10);
+}
+
+// Variants of the above functions with an added newline //////////////////////
+
+size_t Print_println_sn(writefunc_p writefunc, const uint8_t *buffer, size_t size)
+{
+	size_t r;
+
+	r = Print_print_sn(writefunc, buffer, size);
+	return r + Print_println(writefunc);
+}
+
+size_t Print_println_s(writefunc_p writefunc, const char *str)
+{
+	size_t r;
+
+	r = Print_print_s(writefunc, str);
+	return r + Print_println(writefunc);
+}
+
+size_t Print_println_u(writefunc_p writefunc, unsigned long n)
+{
+	size_t r;
+
+	r = printNumber(writefunc, n,10);
+	return r + Print_println(writefunc);
+}
+
+size_t Print_println_i(writefunc_p writefunc, long n)
+{
+	size_t r;
+
+	r = printInt(writefunc, n,10);
+	return r + Print_println(writefunc);
+}
+
+size_t Print_println_ub(writefunc_p writefunc, unsigned long n, uint8_t base)
+{
+	size_t r;
+
+	r = printNumber(writefunc, n,base);
+	return r + Print_println(writefunc);
+}
+
+size_t Print_println_ib(writefunc_p writefunc, long n, uint8_t base)
+{
+	size_t r;
+
+	r = printInt(writefunc, n,base);
+	return r + Print_println(writefunc);
+}
+
+
+
+// (not so) Private Methods /////////////////////////////////////////////////////////////
+
 size_t Print_println(writefunc_p writefunc)
 {
 	size_t n;
@@ -77,12 +151,11 @@ size_t Print_println(writefunc_p writefunc)
 	return n;
 }
 
+
 size_t Print_print_ub(writefunc_p writefunc, unsigned long n, uint8_t base)
 {
   char buf[8 * sizeof(long) + 1]; // Assumes 8-bit chars plus zero byte.
   char *str = &buf[sizeof(buf) - 1];
-  unsigned long q;
-  uint8_t c;
 
   *str = '\0';
 
@@ -90,10 +163,9 @@ size_t Print_print_ub(writefunc_p writefunc, unsigned long n, uint8_t base)
   if (base < 2) base = 10;
 
   do {
-    // una sola division de 32 bits por cifra: el resto se saca en 8 bits
-    q = n / base;
-    c = (uint8_t)n - (uint8_t)((uint8_t)q * base);
-    n = q;
+    char c = n % base;
+    n /= base;
+
     *--str = c < 10 ? c + '0' : c + 'A' - 10;
   } while(n);
 

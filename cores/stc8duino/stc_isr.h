@@ -16,9 +16,5 @@ void stc_timer0_isr(void) __interrupt(1);   /* millis() */
 void stc_uart1_isr(void) __interrupt(4);    /* Serial */
 void stc_int0_isr(void) __interrupt(0);     /* attachInterrupt(0) */
 void stc_int1_isr(void) __interrupt(2);     /* attachInterrupt(1) */
-void stc_int2_isr(void) __interrupt(10);    /* attachInterrupt(2) */
-void stc_int3_isr(void) __interrupt(11);    /* attachInterrupt(3) */
-void stc_int4_isr(void) __interrupt(16);    /* attachInterrupt(4) */
-void stc_timer1_isr(void) __interrupt(3);   /* timer1Begin() */
 
 #endif

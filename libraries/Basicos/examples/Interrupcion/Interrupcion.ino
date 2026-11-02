@@ -1,11 +1,7 @@
 /*
  * Interrupcion - un pulsador entre P3.2 (INT0) y GND cambia el LED.
- *
- * Interrupciones externas: 0 = P3.2, 1 = P3.3 (FALLING o CHANGE),
- * 2 = P3.6, 3 = P3.7, 4 = P3.0 (solo FALLING).
+ * attachInterrupt(0, ...) es INT0 en P3.2; attachInterrupt(1, ...) es INT1 en P3.3.
  */
-#define PULSADOR P3_2
-
 volatile uint8_t pulsado = 0;
 
 void alPulsar(void) {
@@ -15,15 +11,15 @@ void alPulsar(void) {
 void setup() {
   Serial.begin(115200);
   pinMode(LED_BUILTIN, OUTPUT);
-  pinMode(PULSADOR, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(PULSADOR), alPulsar, FALLING);
+  pinMode(P3_2, INPUT_PULLUP);
+  attachInterrupt(0, alPulsar, FALLING);
 }
 
 void loop() {
   if (pulsado) {
-    delay(30);           /* antirrebote: se ignoran los rebotes de 30 ms */
     pulsado = 0;
     digitalToggle(LED_BUILTIN);
     Serial.println("pulsado");
+    delay(50);   // antirrebote sencillo
   }
 }

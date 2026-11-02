@@ -60,7 +60,6 @@ __sbit __at(0xAC) ES;
 __sbit __at(0xAD) EADC;
 __sbit __at(0xAF) EA;
 __sbit __at(0xB9) PT0;
-__sbit __at(0xBB) PT1;
 __sbit __at(0xBC) PS;
 
 /* ---------- STC (comunes a STC8 y STC15) ---------- */
@@ -116,7 +115,6 @@ __sfr __at(0xE8) P6;
 __sfr __at(0xF8) P7;
 
 #ifdef STC8
-__sfr __at(0xEF) AUXINTIF;    /* banderas de INT2, INT3 e INT4 */
 __sfr __at(0xDE) ADCCFG;
 __sfr __at(0xF5) IAP_TPS;
 __sfr __at(0xFF) RSTCFG;

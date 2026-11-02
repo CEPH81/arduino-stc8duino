@@ -6,7 +6,7 @@
 # Especificacion: https://arduino.github.io/arduino-cli/latest/platform-specification/
 
 name=STC8 Core by MikrocontrollerCephs
-version=0.1.7
+version=0.1.3
 
 stc.tools.path={runtime.platform.path}/tools
 
@@ -90,4 +90,4 @@ tools.stcload.cmd=stcload
 tools.stcload.cmd.windows=stcload.exe
 tools.stcload.upload.params.verbose=-v
 tools.stcload.upload.params.quiet=
-tools.stcload.upload.pattern="{path}/{cmd}" {upload.verbose} -port "{serial.port}" -chip {build.mcu} -freq {build.f_cpu} -resetbaud {upload.reset_baud} {upload.prog_flags} -modo {upload.modo} -hex "{build.path}/{build.project_name}.hex"
+tools.stcload.upload.pattern="{path}/{cmd}" {upload.verbose} -port "{serial.port}" -chip {build.mcu} -freq {build.f_cpu} -resetbaud {upload.reset_baud} {upload.prog_flags} -hex "{build.path}/{build.project_name}.hex"

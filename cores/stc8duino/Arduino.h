@@ -171,15 +171,8 @@ unsigned long micros(void);
 void delay(unsigned long ms);
 void delayMicroseconds(unsigned int us);
 
-/* interrupciones externas: 0 = P3.2, 1 = P3.3, 2 = P3.6, 3 = P3.7, 4 = P3.0 */
-#define digitalPinToInterrupt(p) ((p) == P3_2 ? 0 : (p) == P3_3 ? 1 : (p) == P3_6 ? 2 : (p) == P3_7 ? 3 : (p) == P3_0 ? 4 : 255)
-#define NOT_AN_INTERRUPT 255
 void attachInterrupt(uint8_t num, void (*func)(void), uint8_t mode);
 void detachInterrupt(uint8_t num);
-
-/* temporizador 1: llama a func() cada periodo_us microsegundos (dentro de la interrupcion) */
-void timer1Begin(unsigned long periodo_us, void (*func)(void));
-void timer1End(void);
 
 void shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, uint8_t val);
 uint8_t shiftIn(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder);
@@ -195,7 +188,7 @@ void stcReset(uint8_t isp);
 
 /* serialEvent(): si el sketch la define, se llama despues de cada loop() */
 void serialEvent(void);
-extern volatile __data unsigned char runSerialEvent;
+extern unsigned char runSerialEvent;
 
 #include "stc_isr.h"
 #include "HardwareSerial.h"
