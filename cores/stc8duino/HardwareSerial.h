@@ -3,6 +3,8 @@
  *
  * En el sketch: Serial.begin(9600); Serial.println(x); Serial.read()...
  * (ver stc_obj.h). La velocidad la da el temporizador 2 (modo 1T).
+ * El envio usa un bufer: Serial.print() vuelve enseguida mientras la UART
+ * transmite por interrupcion (solo espera si el bufer se llena).
  *
  * Carga sin pulsar nada: si el sketch usa Serial, el cargador envia por el
  * puerto la secuencia "@STCISP#" y el chip se reinicia en el modo de carga.
@@ -20,7 +22,10 @@
 #define SERIAL_8N1 0x00
 
 #ifndef SERIAL_RX_BUFFER_SIZE
-#define SERIAL_RX_BUFFER_SIZE 32   /* potencia de 2 */
+#define SERIAL_RX_BUFFER_SIZE 64   /* potencia de 2, hasta 128 */
+#endif
+#ifndef SERIAL_TX_BUFFER_SIZE
+#define SERIAL_TX_BUFFER_SIZE 64   /* potencia de 2, hasta 128 */
 #endif
 
 void HardwareSerial_begin(unsigned long baud);
@@ -29,6 +34,7 @@ void HardwareSerial_end(void);
 int HardwareSerial_available(void);
 int HardwareSerial_peek(void);
 int HardwareSerial_read(void);
+int HardwareSerial_availableForWrite(void);
 size_t HardwareSerial_write(uint8_t c);
 void HardwareSerial_flush(void);
 
@@ -43,6 +49,7 @@ void HardwareSerial_flush(void);
 #define Serial__peek()              HardwareSerial_peek()
 #define Serial__read()              HardwareSerial_read()
 #define Serial__flush()             HardwareSerial_flush()
+#define Serial__availableForWrite() HardwareSerial_availableForWrite()
 #define Serial__print(...)          S8_PRINT(HardwareSerial_write, __VA_ARGS__)
 #define Serial__println(...)        S8_PRINTLN(HardwareSerial_write, __VA_ARGS__)
 #define Serial__write(...)          S8_WRITE(HardwareSerial_write, __VA_ARGS__)

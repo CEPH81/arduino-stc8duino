@@ -35,10 +35,14 @@ void loop() {
 - **Patas**: con su nombre, `P1_0`, `P3_2`… o en hexadecimal `0x10`, `0x32` (puerto y bit).
 - `pinMode`: `INPUT` (alta impedancia), `OUTPUT` (push-pull), `INPUT_PULLUP`,
   `OUTPUT_OPEN_DRAIN`, `QUASI_BIDIRECTIONAL` (el modo clásico del 8051).
-- `Serial`: UART1, RX P3.0 / TX P3.1. `Serial.print(x)`, `println`, `write`, `read`, `available`.
-- `analogRead(A0…)`: 10 bits por defecto; `analogReadResolution(12)` en STC8H/STC8A.
-- `attachInterrupt(0, f, FALLING)`: INT0 (P3.2); `1` = INT1 (P3.3). `FALLING` o `CHANGE`.
-- `millis`, `micros`, `delay`, `delayMicroseconds`, `shiftOut`, `shiftIn`, `pulseIn`, `random`, `map`.
+- `Serial`: UART1, RX P3.0 / TX P3.1. `Serial.print(x)`, `println`, `write`, `read`, `available`,
+  `availableForWrite`. El envío usa un búfer de 64 bytes: `print()` no espera a la UART.
+- `analogRead(A0…)`: 10 bits por defecto; `analogReadResolution(12)` en STC8H/STC8A. Unos 20 µs por lectura.
+- `attachInterrupt(digitalPinToInterrupt(P3_2), f, FALLING)`: 0 = P3.2, 1 = P3.3 (`FALLING` o `CHANGE`),
+  2 = P3.6, 3 = P3.7, 4 = P3.0 (solo `FALLING`).
+- `timer1Begin(periodo_us, f)` / `timer1End()`: interrupción periódica con el temporizador 1.
+- `millis`, `micros` (resolución de 1 µs, leen el temporizador 0), `delay`, `delayMicroseconds`
+  (por temporizador, ±2 µs), `shiftOut`, `shiftIn`, `pulseIn`, `random`, `map`.
 - C, no C++: no hay clases ni `String`.
 
 ## Reloj y carga

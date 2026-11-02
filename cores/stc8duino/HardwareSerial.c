@@ -20,6 +20,7 @@ void HardwareSerial_begin_config(unsigned long baud, uint8_t config)
 	AUXR |= AUXR_T2x12 | AUXR_S1ST2 | AUXR_T2R;
 	P_SW1 &= 0x3F;                       /* UART1 en P3.0/P3.1 */
 	stc_rx_head = stc_rx_tail = 0;
+	stc_tx_head = stc_tx_tail = 0;
 	stc_tx_busy = 0;
 	runSerialEvent = 0;
 	ES = 1;
@@ -43,6 +44,11 @@ int HardwareSerial_available(void)
 	return (uint8_t)(stc_rx_head - stc_rx_tail) & (SERIAL_RX_BUFFER_SIZE - 1);
 }
 
+int HardwareSerial_availableForWrite(void)
+{
+	return (SERIAL_TX_BUFFER_SIZE - 1) - ((uint8_t)(stc_tx_head - stc_tx_tail) & (SERIAL_TX_BUFFER_SIZE - 1));
+}
+
 int HardwareSerial_peek(void)
 {
 	if (stc_rx_head == stc_rx_tail) return -1;
@@ -61,13 +67,28 @@ int HardwareSerial_read(void)
 
 size_t HardwareSerial_write(uint8_t c)
 {
-	while (stc_tx_busy)
-		;
-	stc_tx_busy = 1;
-	SBUF = c;
+	__data uint8_t next;
+	for (;;) {
+		ES = 0;
+		if (!stc_tx_busy) {              /* UART libre: se envia directamente */
+			stc_tx_busy = 1;
+			SBUF = c;
+			ES = 1;
+			return 1;
+		}
+		next = (stc_tx_head + 1) & (SERIAL_TX_BUFFER_SIZE - 1);
+		if (next != stc_tx_tail) break;
+		ES = 1;                          /* bufer lleno: esperar a que salga un byte */
+		while (next == stc_tx_tail)
+			;
+	}
+	stc_tx_buf[stc_tx_head] = c;
+	stc_tx_head = next;
+	ES = 1;
 	return 1;
 }
 
+/* espera a que se haya enviado todo */
 void HardwareSerial_flush(void)
 {
 	while (stc_tx_busy)

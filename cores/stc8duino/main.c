@@ -4,7 +4,7 @@
  */
 #include <Arduino.h>
 
-unsigned char runSerialEvent;
+volatile __data unsigned char runSerialEvent;
 
 void main(void)
 {
