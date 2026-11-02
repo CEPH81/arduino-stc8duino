@@ -1,56 +1,45 @@
 /*
- * LogDemo - log por niveles con colores (STC_Log).
+ * LogDemo - recorre los niveles del log (STC_Log): cada color se muestra 5 s,
+ * con un mensaje por segundo que cuenta de 1 a 5, y pasa al siguiente:
+ *   E rojo -> W amarillo -> I verde -> D azul -> V gris -> vuelve a empezar
  *
  * Abra un terminal con colores ANSI a 115200 baudios (PuTTY, Tera Term, el
  * monitor serie de VS Code...). En el monitor serie del Arduino IDE los colores
  * salen como codigos raros: cambie COLORES a 0.
- *
- * Cada 2 s escribe un mensaje de cada nivel; el pulsador (P3.3 en la
- * STC8H8K64U) cambia el nivel minimo que se muestra.
+ * El LED cambia en cada mensaje.
  */
 #include <STC_Log.h>
 
-#define COLORES 1
-#ifdef BOTON_BUILTIN
-#define BOTON BOTON_BUILTIN
-#else
-#define BOTON P3_3
-#endif
+#define COLORES   1
+#define SEGUNDOS  5        /* tiempo de cada color */
 
 static const char *TAG = "DEMO";
-LOG_LevelTypeDef nivel = LOG_VERBOSE;
-unsigned int vuelta = 0;
+static const char *nombres[] = { "", "rojo (error)", "amarillo (aviso)", "verde (info)",
+                                 "azul (depuracion)", "gris (detalle)" };
 uint8_t datos[20];
 
 void setup() {
   uint8_t i;
   Log_Init(115200);
   Log_SetColors(COLORES);
-  Log_SetLevel(nivel);
-  pinMode(BOTON, INPUT_PULLUP);
+  Log_SetLevel(LOG_VERBOSE);          /* mostrar todos los niveles */
   pinMode(LED_BUILTIN, OUTPUT);
 
   LOGI(TAG, "stc8duino: LogDemo, compilado %s %s", __DATE__, __TIME__);
-  LOGI(TAG, "F_CPU = %lu Hz", (unsigned long)F_CPU);
   for (i = 0; i < sizeof(datos); i++) datos[i] = 'A' + i;
   Log_Hex(LOG_INFO, "HEX", datos, sizeof(datos));
 }
 
 void loop() {
-  vuelta++;
-  LOGE(TAG, "error de ejemplo, vuelta %u", vuelta);
-  LOGW(TAG, "aviso: temperatura alta (%d C)", 85);
-  LOGI(TAG, "info: millis = %lu", millis());
-  LOGD(TAG, "depuracion: 255 = 0x%02X = %b", 255, 255);
-  LOGV(TAG, "detalle: vuelta %5u, -42 = %d", vuelta, -42);
+  LOG_LevelTypeDef nivel;
+  uint8_t s;
 
-  /* pulsador: nivel minimo E -> W -> I -> D -> V -> E... */
-  if (digitalRead(BOTON) == LOW) {
-    nivel = (nivel >= LOG_VERBOSE) ? LOG_ERROR : (LOG_LevelTypeDef)(nivel + 1);
-    Log_SetLevel(nivel);
-    LOGE(TAG, "nivel cambiado a %c", "-EWIDV"[nivel]);
-    while (digitalRead(BOTON) == LOW) ;
+  for (nivel = LOG_ERROR; nivel <= LOG_VERBOSE; nivel = (LOG_LevelTypeDef)(nivel + 1)) {
+    for (s = 1; s <= SEGUNDOS; s++) {
+      Log_Write(nivel, TAG, "%s: %u de %u s", nombres[nivel], s, SEGUNDOS);
+      digitalToggle(LED_BUILTIN);
+      delay(1000);
+    }
   }
-  digitalToggle(LED_BUILTIN);
-  delay(2000);
+  LOGI(TAG, "---- vuelta completa, millis = %lu ----", millis());
 }
