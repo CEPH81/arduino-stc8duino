@@ -61,7 +61,7 @@ func main() {
 	baud := flag.Int("baud", 115200, "velocidad de la carga")
 	espera := flag.Int("espera", 60, "segundos de espera al chip")
 	corte := flag.String("corte", "", "cortar la alimentacion de la placa con la linea rts o dtr del adaptador (circuito de 2 transistores, como stcgal -a)")
-	prog := flag.String("prog", "serie", "programador: serie (adaptador USB-serie) o link1d (STC-USB Link1D, puerto CDC1)")
+	prog := flag.String("prog", "serie", "programador: serie (adaptador USB-serie) o link1d (STC-USB Link1D, su puerto COM)")
 	flag.BoolVar(&detalle, "v", false, "mostrar los paquetes")
 	soloInfo := flag.Bool("info", false, "solo probar la conexion: identifica el chip y no graba nada")
 	flag.Parse()
@@ -104,7 +104,7 @@ func main() {
 	}
 	s.corte = *corte
 	if *prog == "link1d" {
-		info("Programador STC-USB Link1D: use su puerto CDC1 (patas S-P3.0 y S-P3.1 a P3.0 y P3.1 del chip).\n")
+		info("Programador STC-USB Link1D: puerto %s (patas TX/RX del Link1D a P3.0/P3.1 del chip, y GND).\n", *port)
 	}
 	if err := s.conectar(*port, *resetBaud, time.Duration(*espera)*time.Second); err != nil {
 		fail("%v", err)

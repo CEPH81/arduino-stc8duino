@@ -247,12 +247,19 @@ func (s *stc) conectar(nombre string, resetBaud int, espera time.Duration) error
 		info("listo\n")
 	}
 
+	aviso := func() {}
 	if s.corte != "" {
 		info("Esperando al chip: ")
-	} else if resetBaud > 0 {
-		info("Esperando al chip (reinicio automatico a %d baudios; si no responde, apague y encienda la placa): ", resetBaud)
 	} else {
-		info("Esperando al chip: apague y encienda la placa... ")
+		info("Esperando al chip...\n")
+		aviso = func() {
+			info("\n>>> AHORA: desconecte la alimentacion de la PLACA y vuelva a conectarla <<<\n")
+			info("    (no desconecte el programador ni el adaptador USB-serie)\n")
+			if resetBaud > 0 {
+				info("    Si el programa actual usa Serial a %d baudios, se reinicia solo.\n", resetBaud)
+			}
+		}
+		aviso()
 	}
 	// el saludo se intenta a 2400 (como stcgal) y a 115200 (como STC-ISP y STC Web ISP,
 	// que es lo que usa el STC-USB Link1D), alternando cada 1,5 s
@@ -262,8 +269,13 @@ func (s *stc) conectar(nombre string, resetBaud int, espera time.Duration) error
 	}
 	vi := 0
 	inicio := time.Now()
-	ultimo, cambio := inicio, inicio
+	ultimo, cambio, avisado := inicio, inicio, inicio
 	for {
+		if time.Since(avisado) > 10*time.Second {
+			avisado = time.Now()
+			info("\nSin respuesta del chip (%d s).", int(time.Since(inicio).Seconds()))
+			aviso()
+		}
 		if time.Since(inicio) > espera {
 			info("\n")
 			return errors.New("el chip no respondio: compruebe el puerto, las conexiones TX/RX y GND, y apague y encienda la placa")
