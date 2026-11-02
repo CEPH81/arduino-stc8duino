@@ -261,8 +261,8 @@ func (s *stc) conectar(nombre string, resetBaud int, espera time.Duration) error
 		}
 		aviso()
 	}
-	// el saludo se intenta a 2400 (como stcgal) y a 115200 (como STC-ISP y STC Web ISP,
-	// que es lo que usa el STC-USB Link1D), alternando cada 1,5 s
+	// el saludo es a 115200 (como STC-ISP y STC Web ISP). Con -hs 2400 se alterna con
+	// 2400 (como stcgal), pero con el Link1D el ajuste del oscilador falla a 2400.
 	velocidades := []int{2400, 115200}
 	if s.hs != 2400 {
 		velocidades = []int{s.hs}

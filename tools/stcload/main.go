@@ -98,7 +98,7 @@ func main() {
 		datos = append(datos, relleno(512-len(datos)%512)...)
 	}
 
-	s := &stc{fam: m.familia, hs: 2400, baud: *baud, trimFreq: int(freq), modelo: m}
+	s := &stc{fam: m.familia, hs: 115200, baud: *baud, trimFreq: int(freq), modelo: m}
 	if *corte != "" && *corte != "rts" && *corte != "dtr" {
 		fail("-corte debe ser rts o dtr")
 	}
@@ -123,7 +123,7 @@ func probar(port, chip string, resetBaud int, corte string, espera time.Duration
 	if port == "" {
 		fail("falta -port")
 	}
-	s := &stc{hs: 2400, baud: 115200, corte: corte}
+	s := &stc{hs: 115200, baud: 115200, corte: corte}
 	for i := range modelos {
 		if strings.EqualFold(modelos[i].nombre, chip) {
 			s.modelo, s.fam = &modelos[i], modelos[i].familia
