@@ -174,6 +174,10 @@ void delayMicroseconds(unsigned int us);
 void attachInterrupt(uint8_t num, void (*func)(void), uint8_t mode);
 void detachInterrupt(uint8_t num);
 
+/* temporizador 1: llama a func() cada periodo_us microsegundos (dentro de la interrupcion) */
+void timer1Begin(unsigned long periodo_us, void (*func)(void));
+void timer1End(void);
+
 void shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, uint8_t val);
 uint8_t shiftIn(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder);
 unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout);
