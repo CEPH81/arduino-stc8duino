@@ -6,7 +6,7 @@
 # Especificacion: https://arduino.github.io/arduino-cli/latest/platform-specification/
 
 name=STC8 Core by MikrocontrollerCephs
-version=0.1.26
+version=0.1.24
 
 stc.tools.path={runtime.platform.path}/tools
 
