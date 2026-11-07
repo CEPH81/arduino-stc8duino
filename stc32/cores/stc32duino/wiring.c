@@ -86,10 +86,10 @@ void delay(unsigned long ms)
 		espera_us(ms * 1000UL);
 }
 
-/* DELAYUS_AJUSTE: lo que tardan la llamada y la primera lectura de micros().
- * Medido con PruebaTiempos a 24 MHz: unos 3 us (72 ciclos); a otras
- * frecuencias se escala: 12 MHz 6 us, 35 MHz 2 us. */
-#define DELAYUS_AJUSTE ((unsigned int)((72000000UL + F_CPU / 2) / F_CPU))
+/* DELAYUS_AJUSTE: lo que tardan la llamada y la primera lectura de micros(),
+ * unos 60 ciclos (medido con PruebaTiempos: 3 us a 24 MHz, 5 us a 11,0592 MHz);
+ * a otras frecuencias se escala: 12 MHz 5 us, 35 MHz 2 us. */
+#define DELAYUS_AJUSTE ((unsigned int)((60000000UL + F_CPU / 2) / F_CPU))
 
 void delayMicroseconds(unsigned int us)
 {
