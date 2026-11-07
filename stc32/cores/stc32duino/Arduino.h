@@ -1,8 +1,8 @@
 /*
  * Arduino.h - nucleo stc32duino para el STC32G12K128 (Keil C251, modelo XSMALL).
  *
- * Primera version: pinMode, digitalWrite, digitalRead, millis, micros, delay
- * y delayMicroseconds. Las patas se nombran P3_4, P1_0... (puerto y bit).
+ * pinMode, digitalWrite/Read/Toggle, millis, micros, delay, delayMicroseconds,
+ * attachInterrupt (INT0/INT1) y Serial. Las patas se nombran P3_4, P1_0...
  *
  * Parte de stc8duino. LGPL 2.1.
  */
@@ -24,8 +24,25 @@ typedef unsigned int   word;
 #define false 0
 #endif
 
+typedef unsigned int   size_t;
+
 #define HIGH 1
 #define LOW  0
+#define FALLING 2
+#define CHANGE  1
+#define RISING  3
+
+#define DEC 10
+#define HEX 16
+#define OCT 8
+#define BIN 2
+
+#ifndef min
+#define min(a, b) ((a) < (b) ? (a) : (b))
+#define max(a, b) ((a) > (b) ? (a) : (b))
+#endif
+#define constrain(x, lo, hi) ((x) < (lo) ? (lo) : ((x) > (hi) ? (hi) : (x)))
+#define F(s) (s)
 #define INPUT        0
 #define OUTPUT       1
 #define INPUT_PULLUP 2
@@ -112,10 +129,16 @@ typedef unsigned int   word;
 #define interrupts()   (EA = 1)
 #define noInterrupts() (EA = 0)
 
+/* interrupciones externas: INT0 = P3.2, INT1 = P3.3 */
+#define digitalPinToInterrupt(p) ((p) == P3_2 ? 0 : ((p) == P3_3 ? 1 : -1))
+void attachInterrupt(uint8_t num, void (*func)(void), uint8_t mode);
+void detachInterrupt(uint8_t num);
+
 void init(void);
 void pinMode(uint8_t pin, uint8_t mode);
 void digitalWrite(uint8_t pin, uint8_t val);
 int  digitalRead(uint8_t pin);
+void digitalToggle(uint8_t pin);
 unsigned long millis(void);
 unsigned long micros(void);
 void delay(unsigned long ms);
@@ -123,5 +146,8 @@ void delayMicroseconds(unsigned int us);
 
 void setup(void);
 void loop(void);
+
+#include "stc_print.h"
+#include "HardwareSerial.h"
 
 #endif

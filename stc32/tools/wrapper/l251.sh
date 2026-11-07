@@ -7,7 +7,9 @@
 # - Los objetos de core.a se extraen (stcar -x) y se enlazan todos;
 #   REMOVEUNUSED quita lo que no se usa.
 # - Memoria como en los proyectos de STC para el STC32G: codigo desde FF0000,
-#   EDATA/HDATA en 0-FFF.
+#   EDATA/HDATA en 0-FFF. NOOVERLAY: las variables locales no se comparten,
+#   porque attachInterrupt y timer1Begin llaman funciones por puntero desde
+#   las interrupciones (el enlazador no puede ver esas llamadas).
 # - Escribe BASE.hex, BASE.map y BASE.size (lo lee size251.sh).
 #
 # Parte de stc8duino. LGPL 2.1.
@@ -57,7 +59,7 @@ ABS="${BASE}.abs"
 	echo ""
 	echo "TO \"$ABS\""
 	echo "PRINT(\"${BASE}.map\") CASE"
-	echo "REMOVEUNUSED"
+	echo "REMOVEUNUSED NOOVERLAY"
 	echo "CLASSES (EDATA (0x0-0xFFF),"
 	echo "HDATA (0x0-0xFFF))"
 } >> "$LNP"

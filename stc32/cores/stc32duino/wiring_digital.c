@@ -62,3 +62,20 @@ int digitalRead(uint8_t pin)
 	}
 	return (v & m) ? HIGH : LOW;
 }
+
+#define CAMBIAR(P) P ^= m;
+
+void digitalToggle(uint8_t pin)
+{
+	uint8_t m = 1 << (pin & 7);
+	switch (pin >> 4) {
+	case 0: CAMBIAR(P0) break;
+	case 1: CAMBIAR(P1) break;
+	case 2: CAMBIAR(P2) break;
+	case 3: CAMBIAR(P3) break;
+	case 4: CAMBIAR(P4) break;
+	case 5: CAMBIAR(P5) break;
+	case 6: CAMBIAR(P6) break;
+	case 7: CAMBIAR(P7) break;
+	}
+}
