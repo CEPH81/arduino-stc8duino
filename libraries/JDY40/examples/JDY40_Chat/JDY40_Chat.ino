@@ -3,7 +3,7 @@
  * JDY-40 y lo que llega por la radio aparece en el monitor. Con dos placas
  * (STC8H o STC32G, da igual) se puede chatear entre dos monitores.
  *
- * Antes: Herramientas > Serial3 (UART3) > Si.
+ * Serial3 se activa solo (no hace falta tocar el menu Serial3).
  * Conexiones: VCC 3,3 V, GND, TXD -> P0.0, RXD -> P0.1, SET -> P2.3, CS -> P2.4
  * (o CS directo a GND y JDY40_SIN_PATA).
  */

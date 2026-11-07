@@ -1,7 +1,7 @@
 /*
  * DT06.h - modulo TTL-WiFi DT-06 (Doit, ESP8285) por Serial3, para stc8duino
  * (STC8H, STC8A) y stc32duino (STC32G).
- * Activar antes: Herramientas > Serial3 (UART3) > Si.
+ * Serial3 se activa solo al incluir esta libreria (UART3.h).
  *
  * El DT-06 trae un programa de "puerto serie a WiFi transparente": lo que
  * entra por su RX sale por la conexion de red (TCP/UDP) y al reves. Todo se
@@ -27,9 +27,7 @@
 
 #include <Arduino.h>
 
-#ifndef STC_SERIAL3
-#error "El DT-06 usa Serial3: active Herramientas > Serial3 (UART3) > Si"
-#endif
+#include <UART3.h>                /* Serial3: no hace falta tocar el menu */
 
 #define DT06_BAUD_FABRICA 115200
 

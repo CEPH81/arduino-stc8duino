@@ -19,6 +19,7 @@ void stc_int1_isr(void) __interrupt(2);     /* attachInterrupt(1) */
 void stc_timer1_isr(void) __interrupt(3);   /* timer1Begin() */
 #if (defined(STC8H) || defined(STC8A)) && defined(STC_SERIAL3)
 void stc_uart3_isr(void) __interrupt(17);   /* Serial3 (en ensamblador: unos 40 bytes) */
+#define STC_ISR_UART3
 #endif
 
 #endif

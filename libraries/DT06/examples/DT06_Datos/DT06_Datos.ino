@@ -3,8 +3,7 @@
  * la lectura de A0 (por ejemplo a un servidor TCP en el PC). Si llega la orden
  * "1" o "0" por la red, enciende o apaga el LED.
  *
- * Antes: Herramientas > Serial3 (UART3) > Si, y configure el modulo en su
- * pagina web (ver DT06.h).
+ * Configure el modulo en su pagina web (ver DT06.h). Serial3 se activa solo.
  * Conexiones: VCC 3,3 V, GND, TX del modulo -> P0.0, RX del modulo -> P0.1.
  */
 #include <DT06.h>

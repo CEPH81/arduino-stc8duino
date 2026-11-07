@@ -4,7 +4,7 @@
  * el monitor. Sirve para probar la conexion configurada en la pagina web del
  * modulo (http://192.168.4.1) con un programa de TCP en el PC o el telefono.
  *
- * Antes: Herramientas > Serial3 (UART3) > Si.
+ * Serial3 se activa solo (no hace falta tocar el menu Serial3).
  * Conexiones: VCC 3,3 V, GND, TX del modulo -> P0.0, RX del modulo -> P0.1.
  * VELOCIDAD: la del puerto serie configurada en el modulo (115200 de fabrica).
  */

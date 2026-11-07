@@ -46,8 +46,6 @@ case "$SRC" in
 		esac
 		{
 			echo "#define STC_SKETCH 1"
-			# referencia a main() para que se enlace main.c del core
-			echo "void main(void); void (*stc_main_ref)(void) = main;"
 			# En C 'x' es un int: .print('x') imprimiria el codigo numerico.
 			# Se convierte en .print("x") para que se comporte como en Arduino.
 			# "Serial.metodo(" -> "Serial__metodo(" (igual con Wire, EEPROM y SPI):
@@ -59,6 +57,8 @@ case "$SRC" in
 				-e "s/(^|[^A-Za-z0-9_.])(Serial3|Serial|Wire|EEPROM|SPI)[[:space:]]*\.[[:space:]]*([A-Za-z_][A-Za-z0-9_]*)[[:space:]]*\(/\1\2__\3(/" \
 				-e "t objeto" \
 				"$SRC"
+			# main() va al final del sketch (ver cores/stc8duino/stc_main.h)
+			[ "$MODO" != "pre" ] && printf '\n#include "stc_main.h"\n'
 		} > "$CSRC"
 		sdcc_o "$@" "$CSRC"
 		ERR=$?

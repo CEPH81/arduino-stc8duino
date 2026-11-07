@@ -5,19 +5,21 @@
  *   Serial3.begin(9600);      RX3 = P0.0, TX3 = P0.1
  *   Serial3.print("AT\r\n");  if (Serial3.available()) c = Serial3.read();
  *
- * Hay que activarlo en Herramientas > Serial3 (UART3) > Si: su interrupcion
- * (la numero 17) alarga la tabla de interrupciones unos 100 bytes en todos los
- * programas, asi que por omision esta apagado y no ocupa memoria.
+ * Para usarlo:  #include <UART3.h>  (JDY40 y DT06 ya lo incluyen), o
+ * Herramientas > Serial3 (UART3) > Siempre. Los programas que no lo usan no
+ * gastan memoria: su interrupcion (la 17) alarga la tabla de vectores ~100
+ * bytes, y esa tabla solo la incluye si el sketch lo usa.
  * Usa el temporizador 3, asi que su velocidad es independiente de la de Serial.
  * Recepcion por interrupcion con bufer de 16 bytes; el envio espera a que salga
  * cada byte (a 9600 baudios, 1 ms por byte).
  *
  * Parte de stc8duino. LGPL 2.1.
  */
+#if (defined(STC8H) || defined(STC8A)) && defined(STC_SERIAL3)
+/* La guarda va dentro del #if: UART3.h define STC_SERIAL3 y vuelve a incluir
+ * este archivo despues de Arduino.h. */
 #ifndef Serial3_h
 #define Serial3_h
-
-#if (defined(STC8H) || defined(STC8A)) && defined(STC_SERIAL3)
 
 #define SERIAL3_RX_BUFFER_SIZE 16   /* fijo: la interrupcion (en ensamblador) usa 0x0F */
 
@@ -30,6 +32,7 @@ size_t Serial3_write(uint8_t c);
 void   Serial3_flush(void);
 
 #ifdef STC_SKETCH
+#undef Serial3__begin                       /* quita el aviso de abajo */
 #define Serial3__begin(baud)        Serial3_begin(baud)
 #define Serial3__end()              Serial3_end()
 #define Serial3__available()        Serial3_available()
@@ -40,10 +43,10 @@ void   Serial3_flush(void);
 #define Serial3__println(...)       S8_PRINTLN(Serial3_write, __VA_ARGS__)
 #define Serial3__write(...)         S8_WRITE(Serial3_write, __VA_ARGS__)
 #endif
+#endif /* Serial3_h */
 
-#elif defined(STC_SKETCH)
+#elif defined(STC_SKETCH) && !defined(Serial3__begin)
 /* sin activar: el error del enlazador dice que hacer */
-void Active_Serial3_en_Herramientas_Serial3_UART3(void);
-#define Serial3__begin(baud)  Active_Serial3_en_Herramientas_Serial3_UART3()
-#endif
+void Serial3_requiere_include_UART3_h(void);
+#define Serial3__begin(baud)  Serial3_requiere_include_UART3_h()
 #endif

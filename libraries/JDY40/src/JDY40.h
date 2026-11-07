@@ -1,7 +1,7 @@
 /*
  * JDY40.h - radio serie JDY-40 (2,4 GHz, transparente) por Serial3, para
  * stc8duino (STC8H, STC8A) y stc32duino (STC32G).
- * Activar antes: Herramientas > Serial3 (UART3) > Si.
+ * Serial3 se activa solo al incluir esta libreria (UART3.h).
  *
  * Conexiones (el JDY-40 funciona a 2,2-3,6 V: VCC a 3,3 V):
  *   TXD del modulo -> P0.0 (RX3)     RXD del modulo -> P0.1 (TX3)
@@ -24,9 +24,7 @@
 
 #include <Arduino.h>
 
-#ifndef STC_SERIAL3
-#error "El JDY-40 usa Serial3: active Herramientas > Serial3 (UART3) > Si"
-#endif
+#include <UART3.h>                /* Serial3: no hace falta tocar el menu */
 
 #define JDY40_SIN_PATA 0xFF       /* CS conectado directo a GND */
 

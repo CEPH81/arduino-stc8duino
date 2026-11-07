@@ -6,7 +6,7 @@
  *   AT+BAUD4      velocidad (4 = 9600)   AT+CLSSA0    modo transparente
  * Sin parametro (por ejemplo AT+RFC) devuelve el valor actual.
  *
- * Antes: Herramientas > Serial3 (UART3) > Si.
+ * Serial3 se activa solo (no hace falta tocar el menu Serial3).
  * Conexiones: VCC 3,3 V, GND, TXD -> P0.0, RXD -> P0.1, SET -> P2.3, CS -> P2.4
  */
 #include <JDY40.h>
