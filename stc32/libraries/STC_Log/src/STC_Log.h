@@ -42,7 +42,7 @@ void Log_SetLevel(LOG_LevelTypeDef level);
 LOG_LevelTypeDef Log_GetLevel(void);
 void Log_SetColors(uint8_t enable);
 void Log_Write(LOG_LevelTypeDef level, const char *tag, const char *fmt, ...);
-void Log_Hex(LOG_LevelTypeDef level, const char *tag, const void *data, unsigned int len);
+void Log_Hex(LOG_LevelTypeDef level, const char *tag, const void *datos, unsigned int len);
 
 /* C251 no tiene macros con argumentos variables: LOGx son funciones */
 void Log_E(const char *tag, const char *fmt, ...);

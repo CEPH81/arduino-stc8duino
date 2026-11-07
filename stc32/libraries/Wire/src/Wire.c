@@ -120,20 +120,20 @@ void Wire_beginTransmission(uint8_t address)
 	tx_err = 0;
 }
 
-size_t Wire_write(uint8_t data)
+size_t Wire_write(uint8_t dato)
 {
 	if (tx_len >= WIRE_BUFFER_SIZE) {
 		tx_err = 1;
 		return 0;
 	}
-	tx_buf[tx_len++] = data;
+	tx_buf[tx_len++] = dato;
 	return 1;
 }
 
-size_t Wire_write_sn(const uint8_t *data, size_t quantity)
+size_t Wire_write_sn(const uint8_t *dato, size_t quantity)
 {
 	size_t n = 0;
-	while (quantity--) n += Wire_write(*data++);
+	while (quantity--) n += Wire_write(*dato++);
 	return n;
 }
 

@@ -36,9 +36,9 @@ uint8_t Wire_endTransmission1(uint8_t sendStop);
 #define Wire_endTransmission()  Wire_endTransmission1(1)
 uint8_t Wire_requestFrom3(uint8_t address, uint8_t quantity, uint8_t sendStop);
 #define Wire_requestFrom2(a, n) Wire_requestFrom3(a, n, 1)
-size_t  Wire_write(uint8_t data);
+size_t  Wire_write(uint8_t dato);
 size_t  Wire_write_s(const char *str);
-size_t  Wire_write_sn(const uint8_t *data, size_t quantity);
+size_t  Wire_write_sn(const uint8_t *dato, size_t quantity);
 int     Wire_available(void);
 int     Wire_read(void);
 int     Wire_peek(void);

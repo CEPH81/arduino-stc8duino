@@ -194,9 +194,9 @@ LOG_NIVEL(Log_D, LOG_DEBUG)
 LOG_NIVEL(Log_V, LOG_VERBOSE)
 
 /* volcado hexadecimal: 16 bytes por linea con su posicion y el texto */
-void Log_Hex(LOG_LevelTypeDef level, const char *tag, const void *data, unsigned int len)
+void Log_Hex(LOG_LevelTypeDef level, const char *tag, const void *datos, unsigned int len)
 {
-	const uint8_t *p = (const uint8_t *)data;
+	const uint8_t *p = (const uint8_t *)datos;
 	unsigned int i, j;
 	if (level == LOG_NONE || level > log_nivel) return;
 	for (i = 0; i < len; i += 16) {
