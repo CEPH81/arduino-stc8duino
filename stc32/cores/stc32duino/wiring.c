@@ -63,16 +63,36 @@ unsigned long micros(void)
 	return m * 1000UL + t / T0_TPU;
 }
 
-void delay(unsigned long ms)
+/* espera 'us' microsegundos contados con micros() (hasta unos 71 minutos) */
+static void espera_us(unsigned long us)
 {
-	unsigned long t0 = millis();
-	while (millis() - t0 < ms)
+	unsigned long t0 = micros();
+	while (micros() - t0 < us)
 		;
 }
+
+/* Con micros() y no con millis(): el primer milisegundo de millis() ya puede
+ * estar empezado, y delay(100) daba unos 99,2 ms. */
+void delay(unsigned long ms)
+{
+	while (ms >= 1000) {
+		espera_us(1000000UL);
+		ms -= 1000;
+	}
+	if (ms)
+		espera_us(ms * 1000UL);
+}
+
+/* DELAYUS_AJUSTE: lo que tardan la llamada y la primera lectura de micros()
+ * (medido con PruebaTiempos a 24 MHz: unos 3 us de mas) */
+#define DELAYUS_AJUSTE 3
 
 void delayMicroseconds(unsigned int us)
 {
 	unsigned long t0 = micros();
+	if (us <= DELAYUS_AJUSTE)
+		return;
+	us -= DELAYUS_AJUSTE;
 	while (micros() - t0 < us)
 		;
 }
