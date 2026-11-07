@@ -789,6 +789,34 @@
         {
           "name": "STC32 Core by MikrocontrollerCephs",
           "architecture": "stc32",
+          "version": "0.1.34",
+          "category": "Contributed",
+          "url": "https://raw.githubusercontent.com/CEPH81/arduino-stc8duino/paquetes/stc32duino-0.1.34.tar.bz2",
+          "archiveFileName": "stc32duino-0.1.34.tar.bz2",
+          "checksum": "SHA-256:84e7671e23b8ee910f496668b4e32d681eb1848bf6a3714157b1cd870c74efb4",
+          "size": "3318175",
+          "help": {
+            "online": "https://github.com/CEPH81/arduino-stc8duino"
+          },
+          "boards": [
+            {
+              "name": "STC32G12K128 (LQFP64)"
+            },
+            {
+              "name": "STC32G12K128 (LQFP48)"
+            }
+          ],
+          "toolsDependencies": [
+            {
+              "packager": "stc8duino",
+              "name": "sdcc",
+              "version": "build.14184_2"
+            }
+          ]
+        },
+        {
+          "name": "STC32 Core by MikrocontrollerCephs",
+          "architecture": "stc32",
           "version": "0.1.33",
           "category": "Contributed",
           "url": "https://raw.githubusercontent.com/CEPH81/arduino-stc8duino/paquetes/stc32duino-0.1.33.tar.bz2",

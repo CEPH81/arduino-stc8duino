@@ -2,7 +2,8 @@
  * Arduino.h - nucleo stc32duino para el STC32G12K128 (Keil C251, modelo XSMALL).
  *
  * pinMode, digitalWrite/Read/Toggle, millis, micros, delay, delayMicroseconds,
- * attachInterrupt (INT0/INT1) y Serial. Las patas se nombran P3_4, P1_0...
+ * attachInterrupt (INT0/INT1), Serial, analogRead (ADC de 12 bits) y
+ * analogWrite (PWM5-PWM8). Las patas se nombran P3_4, P1_0...
  *
  * Parte de stc8duino. LGPL 2.1.
  */
@@ -124,6 +125,23 @@ typedef unsigned int   size_t;
 #define P7_6 0x76
 #define P7_7 0x77
 
+/* entradas analogicas: A0-A7 = P1.0-P1.7, A8-A14 = P0.0-P0.6 */
+#define A0  P1_0
+#define A1  P1_1
+#define A2  P1_2
+#define A3  P1_3
+#define A4  P1_4
+#define A5  P1_5
+#define A6  P1_6
+#define A7  P1_7
+#define A8  P0_0
+#define A9  P0_1
+#define A10 P0_2
+#define A11 P0_3
+#define A12 P0_4
+#define A13 P0_5
+#define A14 P0_6
+
 #include "pins_arduino.h"
 
 #define interrupts()   (EA = 1)
@@ -139,6 +157,9 @@ void pinMode(uint8_t pin, uint8_t mode);
 void digitalWrite(uint8_t pin, uint8_t val);
 int  digitalRead(uint8_t pin);
 void digitalToggle(uint8_t pin);
+int  analogRead(uint8_t pin);
+void analogReadResolution(uint8_t bits);
+void analogWrite(uint8_t pin, int val);
 unsigned long millis(void);
 unsigned long micros(void);
 void delay(unsigned long ms);

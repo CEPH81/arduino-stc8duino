@@ -60,7 +60,11 @@ sbit ET1  = IE^3;
 sbit EX1  = IE^2;
 sbit ET0  = IE^1;
 sbit EX0  = IE^0;
+sfr ADC_CONTR = 0xBC;
+sfr ADC_RES   = 0xBD;
+sfr ADC_RESL  = 0xBE;
 sfr IAP_CONTR = 0xC7;
+sfr ADCCFG    = 0xDE;
 sfr T2H   = 0xD6;
 sfr T2L   = 0xD7;
 sfr P_SW2 = 0xBA;
@@ -77,5 +81,22 @@ sfr CKCON = 0xEA;
 #define P5PU (*(unsigned char volatile far *)0x7efe15)
 #define P6PU (*(unsigned char volatile far *)0x7efe16)
 #define P7PU (*(unsigned char volatile far *)0x7efe17)
+
+/* modulo PWMB (canales PWM5-PWM8) y ADC (XFR) */
+#define XFR(a) (*(unsigned char volatile far *)(a))
+#define ADCTIM      XFR(0x7efea8)
+#define PWMB_ENO    XFR(0x7efeb5)
+#define PWMB_PS     XFR(0x7efeb6)
+#define PWMB_CR1    XFR(0x7efee0)
+#define PWMB_EGR    XFR(0x7efee7)
+#define PWMB_CCMR1_DIR 0x7efee8UL   /* CCMR1..4 (canales 5..8) seguidos */
+#define PWMB_CCER1  XFR(0x7efeec)
+#define PWMB_CCER2  XFR(0x7efeed)
+#define PWMB_PSCRH  XFR(0x7efef0)
+#define PWMB_PSCRL  XFR(0x7efef1)
+#define PWMB_ARRH   XFR(0x7efef2)
+#define PWMB_ARRL   XFR(0x7efef3)
+#define PWMB_CCR5H_DIR 0x7efef5UL   /* CCR5H, CCR5L, CCR6H ... CCR8L */
+#define PWMB_BKR    XFR(0x7efefd)
 
 #endif
