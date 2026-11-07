@@ -1,6 +1,6 @@
 /*
  * Blink32 - primera prueba del STC32G12K128: parpadea LED_BUILTIN
- * (P3.4 en la placa LQFP64; P1.0 en la LQFP48, con un LED externo).
+ * (P3.4 en la placa LQFP64; P2.0 en la LQFP48, con un LED externo).
  */
 
 void setup() {
