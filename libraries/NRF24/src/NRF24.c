@@ -132,7 +132,7 @@ void nrf24_setPayloadSize(uint8_t n)
 	if (n < 1) n = 1;
 	if (n > 32) n = 32;
 	tam_paquete = n;
-	for (i = 0; i < 6; i++) nrf24_writeRegister(RX_PW_P0 + i, n);
+	for (i = 0; i < 6; i++) nrf24_writeRegister((uint8_t)(RX_PW_P0 + i), n);
 }
 
 void nrf24_setDataRate(uint8_t velocidad)
@@ -169,9 +169,9 @@ void nrf24_openReadingPipe(uint8_t tubo, const uint8_t *dir5)
 		for (i = 0; i < 5; i++) dir_p0[i] = dir5[i];
 		p0_usado = 1;
 	}
-	if (tubo < 2) escribir_bytes(RX_ADDR_P0 + tubo, dir5, 5);
-	else nrf24_writeRegister(RX_ADDR_P0 + tubo, dir5[0]);   /* 2-5: solo el primer byte */
-	nrf24_writeRegister(EN_RXADDR, nrf24_readRegister(EN_RXADDR) | (1 << tubo));
+	if (tubo < 2) escribir_bytes((uint8_t)(RX_ADDR_P0 + tubo), dir5, 5);
+	else nrf24_writeRegister((uint8_t)(RX_ADDR_P0 + tubo), dir5[0]);   /* 2-5: solo el primer byte */
+	nrf24_writeRegister(EN_RXADDR, (uint8_t)(nrf24_readRegister(EN_RXADDR) | (1 << tubo)));
 }
 
 void nrf24_powerUp(void)

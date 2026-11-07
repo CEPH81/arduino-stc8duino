@@ -79,7 +79,7 @@ static uint8_t poner(const char *orden, unsigned int v, uint8_t cifras, uint8_t 
 	}
 	for (k = cifras; k > 0; k--) {
 		uint8_t d = hex ? (uint8_t)(v & 15) : (uint8_t)(v % 10);
-		buf[i + k - 1] = d < 10 ? '0' + d : 'A' + d - 10;
+		buf[i + k - 1] = (char)(d < 10 ? '0' + d : 'A' + d - 10);
 		v = hex ? (v >> 4) : (v / 10);
 	}
 	buf[i + cifras] = 0;

@@ -5,20 +5,22 @@
  *   Serial3.begin(9600);      RX3 = P0.0, TX3 = P0.1
  *   Serial3.print("AT\r\n");  if (Serial3.available()) c = Serial3.read();
  *
- * Hay que activarlo en Herramientas > Serial3 (UART3) > Si (asi no ocupa
- * memoria en los programas que no lo usan).
+ * Para usarlo:  #include <UART3.h>  (las librerias JDY40 y DT06 ya lo
+ * incluyen), o Herramientas > Serial3 (UART3) > Si. Sin eso no ocupa memoria.
  * Usa el temporizador 3: su velocidad es independiente de la de Serial.
  * Recepcion por interrupcion con bufer de 32 bytes; el envio espera a que
  * salga cada byte (a 9600 baudios, 1 ms por byte).
  *
  * Parte de stc8duino (version stc32duino). LGPL 2.1.
  */
+/* La guarda va dentro del #ifdef: una libreria (UART3.h) puede definir
+ * STC_SERIAL3 e incluir este archivo despues de Arduino.h. */
+#ifdef STC_SERIAL3
 #ifndef Serial3_h
 #define Serial3_h
 
-#ifdef STC_SERIAL3
-
 #define SERIAL3_RX_BUFFER_SIZE 32
+#undef Serial3__begin_1           /* quita el aviso de abajo si ya se incluyo */
 
 void   Serial3_begin(unsigned long baud);
 void   Serial3_end(void);
@@ -64,10 +66,10 @@ void   Serial3_flush(void);
 #define Serial3__println_F(x)      (Serial3__print_F(x), Serial3_writeStr("\r\n"))
 #define Serial3__println_F2(x, d)  (Serial3__print_F2(x, d), Serial3_writeStr("\r\n"))
 
+#endif /* Serial3_h */
+
 #else
 /* sin activar: el error del enlazador dice que hacer */
-void Active_Serial3_en_Herramientas_Serial3_UART3(void);
-#define Serial3__begin_1(b)  Active_Serial3_en_Herramientas_Serial3_UART3()
-#endif
-
+void Serial3_requiere_include_UART3_h(void);
+#define Serial3__begin_1(b)  Serial3_requiere_include_UART3_h()
 #endif

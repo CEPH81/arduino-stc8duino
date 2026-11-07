@@ -2,7 +2,7 @@
  * JDY40_Sensor - envia por la radio JDY-40, cada segundo, una linea de texto
  * con una cuenta y la lectura de A0. En la otra placa, JDY40_Chat la muestra.
  *
- * Antes: Herramientas > Serial3 (UART3) > Si.
+ * Serial3 se activa solo (no hace falta tocar el menu Serial3).
  * Conexiones: VCC 3,3 V, GND, TXD -> P0.0, RXD -> P0.1, SET -> P2.3, CS -> P2.4
  */
 #include <JDY40.h>
