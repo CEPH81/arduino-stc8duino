@@ -7,7 +7,10 @@
 
 #define T0_TICKS  (F_CPU / 1000UL)              /* ciclos por ms */
 #define T0_RELOAD ((unsigned int)(65536UL - T0_TICKS))
-#define T0_TPU    ((unsigned int)(F_CPU / 1000000UL))   /* ciclos por us */
+/* fraccion del ms en us = ciclos * T0_K >> 16, con T0_K = 65536000 / ciclos por ms.
+ * Vale para cualquier frecuencia (11,0592, 22,1184, 33,1776 MHz...) y nunca
+ * pasa de 999 us: micros() no retrocede al cambiar de milisegundo. */
+#define T0_K      ((unsigned long)(65536000UL / T0_TICKS))
 
 static volatile unsigned long ms_count;
 
@@ -60,7 +63,7 @@ unsigned long micros(void)
 	if (TF0 && t < T0_TICKS / 2)
 		m++;           /* desbordo y la interrupcion aun no corrio */
 	ET0 = 1;
-	return m * 1000UL + t / T0_TPU;
+	return m * 1000UL + (((unsigned long)t * T0_K) >> 16);
 }
 
 /* espera 'us' microsegundos contados con micros() (hasta unos 71 minutos) */
@@ -83,9 +86,10 @@ void delay(unsigned long ms)
 		espera_us(ms * 1000UL);
 }
 
-/* DELAYUS_AJUSTE: lo que tardan la llamada y la primera lectura de micros()
- * (medido con PruebaTiempos a 24 MHz: unos 3 us de mas) */
-#define DELAYUS_AJUSTE 3
+/* DELAYUS_AJUSTE: lo que tardan la llamada y la primera lectura de micros().
+ * Medido con PruebaTiempos a 24 MHz: unos 3 us (72 ciclos); a otras
+ * frecuencias se escala: 12 MHz 6 us, 35 MHz 2 us. */
+#define DELAYUS_AJUSTE ((unsigned int)((72000000UL + F_CPU / 2) / F_CPU))
 
 void delayMicroseconds(unsigned int us)
 {
