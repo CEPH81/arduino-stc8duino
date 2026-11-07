@@ -26,7 +26,7 @@ void loop() {
   uint8_t i;
   /* un LED encendido (bit en 0) que recorre P0 a P7 */
   for (i = 0; i < 8; i++) {
-    pcf8574_write(EXPANSOR, ~(1 << i));
+    pcf8574_write(EXPANSOR, (uint8_t)~(1 << i));
     delay(150);
   }
   /* las 8 encendidas, luego apagadas */

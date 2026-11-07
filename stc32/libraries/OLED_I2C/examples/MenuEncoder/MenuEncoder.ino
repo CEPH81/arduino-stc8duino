@@ -87,7 +87,7 @@ void nombre(uint8_t i) {
 }
 
 void dibujarOpcion(uint8_t i) {
-  oled_setCursor(0, 2 + i);
+  oled_setCursor(0, (uint8_t)(2 + i));
   oled_setInvert(i == sel && !editando);
   nombre(i);
   oled_print("  ");

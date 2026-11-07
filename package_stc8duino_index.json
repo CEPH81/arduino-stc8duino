@@ -12,12 +12,12 @@
         {
           "name": "STC8 Core by MikrocontrollerCephs",
           "architecture": "stc8",
-          "version": "0.1.40",
+          "version": "0.1.41",
           "category": "Contributed",
-          "url": "https://raw.githubusercontent.com/CEPH81/arduino-stc8duino/paquetes/stc8duino-0.1.40.tar.bz2",
-          "archiveFileName": "stc8duino-0.1.40.tar.bz2",
-          "checksum": "SHA-256:51bfd3c6b1023a3b83f53e41600635d8653e4304e03f0d0b344b359f07aa7c4e",
-          "size": "3614772",
+          "url": "https://raw.githubusercontent.com/CEPH81/arduino-stc8duino/paquetes/stc8duino-0.1.41.tar.bz2",
+          "archiveFileName": "stc8duino-0.1.41.tar.bz2",
+          "checksum": "SHA-256:24673248d30cf39f3a12e546cc40eeb54f13a37838b46b48b7af9c649c28af54",
+          "size": "3617228",
           "help": {
             "online": "https://github.com/CEPH81/arduino-stc8duino"
           },
@@ -49,12 +49,12 @@
         {
           "name": "STC32 Core by MikrocontrollerCephs",
           "architecture": "stc32",
-          "version": "0.1.46",
+          "version": "0.1.47",
           "category": "Contributed",
-          "url": "https://raw.githubusercontent.com/CEPH81/arduino-stc8duino/paquetes/stc32duino-0.1.46.tar.bz2",
-          "archiveFileName": "stc32duino-0.1.46.tar.bz2",
-          "checksum": "SHA-256:29c2599a3063ad343f427bd6813d75d4c6888bfa1db7c64c87b0ed56d78564aa",
-          "size": "3593168",
+          "url": "https://raw.githubusercontent.com/CEPH81/arduino-stc8duino/paquetes/stc32duino-0.1.47.tar.bz2",
+          "archiveFileName": "stc32duino-0.1.47.tar.bz2",
+          "checksum": "SHA-256:97bc5dbc054a3ed45159c567fe2d30341cdc940dbcdb6cec2375faf74069c106",
+          "size": "3597109",
           "help": {
             "online": "https://github.com/CEPH81/arduino-stc8duino"
           },

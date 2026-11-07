@@ -9,10 +9,12 @@
 // char es _C, y si es una llamada a funcion es _L (entero), _U (millis(),
 // micros()) o _F (decimales), para que la funcion se llame una sola vez
 // (_L2/_U2/_F2 con un segundo argumento).
-//   Serial.print("hola")   -> Serial__print_S("hola")
-//   Serial.print('A')      -> Serial__print_S("A")
-//   Serial.println(x, HEX) -> Serial__println_2(x, HEX)
-//   Serial.println()       -> Serial__println_0()
+//
+//	Serial.print("hola")   -> Serial__print_S("hola")
+//	Serial.print('A')      -> Serial__print_S("A")
+//	Serial.println(x, HEX) -> Serial__println_2(x, HEX)
+//	Serial.println()       -> Serial__println_0()
+//
 // Lo mismo con las funciones que imprimen como Serial.print (lcd_print,
 // oled_print, tft_print): lcd_print(x) -> lcd_print_1(x).
 // Los textos y los comentarios no se tocan. Las rutas de #line pasan a "/".
@@ -316,7 +318,53 @@ func reescribirSketch(src string) string {
 	src = reLineaDir.ReplaceAllStringFunc(src, func(l string) string {
 		return strings.ReplaceAll(l, `\\`, "/")
 	})
+	src = juntarPrototipos(src)
 	return nuevoReescritor(src).proc(src)
+}
+
+func esLinea(l string) bool { return strings.HasPrefix(strings.TrimSpace(l), "#line") }
+
+func esPrototipo(l string) bool {
+	t := strings.TrimSpace(l)
+	return t != "" && t[0] != '#' && strings.HasSuffix(t, ";") && strings.Contains(t, "(")
+}
+
+// juntarPrototipos: el IDE pone los prototipos de las funciones antes de la
+// primera, cada uno con su "#line N", y despues "#line N" otra vez. C251 solo
+// respeta el primer #line, asi que los avisos y errores salian con el numero
+// de linea corrido. Se quitan esos #line y los prototipos van al comienzo de
+// la linea de la primera funcion: el sketch conserva su numeracion.
+func juntarPrototipos(src string) string {
+	l := strings.Split(src, "\n")
+	primero := -1
+	for i := range l {
+		if esLinea(l[i]) {
+			primero = i
+			break
+		}
+	}
+	if primero < 0 {
+		return src
+	}
+	var out []string
+	out = append(out, l[:primero+1]...)
+	for i := primero + 1; i < len(l); i++ {
+		if esLinea(l[i]) {
+			var protos []string
+			j := i
+			for j+1 < len(l) && esLinea(l[j]) && esPrototipo(l[j+1]) {
+				protos = append(protos, strings.TrimSpace(l[j+1]))
+				j += 2
+			}
+			if len(protos) > 0 && j+1 < len(l) && esLinea(l[j]) {
+				out = append(out, strings.Join(protos, " ")+" "+l[j+1])
+				i = j + 1
+				continue
+			}
+		}
+		out = append(out, l[i])
+	}
+	return strings.Join(out, "\n")
 }
 
 func modoObj(entrada, salida string) {

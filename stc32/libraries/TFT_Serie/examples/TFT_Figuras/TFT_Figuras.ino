@@ -50,7 +50,7 @@ void rectangulos(void) {
   int d = TFT_ANCHO / 18;
   titulo("Rectangulos");
   for (i = 0; i < 8; i++) {
-    tft_rect(i * d, ARRIBA + i * d, TFT_ANCHO - 1 - i * d, TFT_ALTO - 1 - i * d, 1 + i);
+    tft_rect(i * d, ARRIBA + i * d, TFT_ANCHO - 1 - i * d, TFT_ALTO - 1 - i * d, (uint8_t)(1 + i));
   }
   tft_rectLleno(TFT_ANCHO / 2 - 10, TFT_ALTO / 2, TFT_ANCHO / 2 + 10, TFT_ALTO / 2 + 20, TFT_ROJO);
 }
@@ -61,7 +61,7 @@ void circulos(void) {
   int cy = ARRIBA + (TFT_ALTO - ARRIBA) / 2;
   titulo("Circulos");
   for (i = 1; i < 8; i++) {
-    tft_circulo(TFT_ANCHO / 2, cy, i * d, 8 + i);
+    tft_circulo(TFT_ANCHO / 2, cy, i * d, (uint8_t)(8 + i));
   }
   tft_circuloLleno(TFT_ANCHO / 2, cy, d - 2, TFT_VERDE);
 }
@@ -70,7 +70,7 @@ void puntos(void) {
   uint8_t i;
   titulo("Puntos al azar");
   for (i = 0; i < 150; i++) {
-    tft_punto(random(TFT_ANCHO), ARRIBA + random(TFT_ALTO - ARRIBA), 1 + random(15));
+    tft_punto((int)random(TFT_ANCHO), (int)(ARRIBA + random(TFT_ALTO - ARRIBA)), (uint8_t)(1 + random(15)));
   }
 }
 

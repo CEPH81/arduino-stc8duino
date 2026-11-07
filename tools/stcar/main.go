@@ -6,8 +6,9 @@
 // todas las funciones del nucleo sin definir).
 //
 // Uso: stcar LIBRERIA.a OBJETO.rel [OBJETO.rel...]
-//      stcar -x LIBRERIA.a CARPETA    (extrae los objetos; lo usa el nucleo STC32)
-//      stcar -obj ENTRADA SALIDA      (Serial.print... para C251, ver obj.go)
+//
+//	stcar -x LIBRERIA.a CARPETA    (extrae los objetos; lo usa el nucleo STC32)
+//	stcar -obj ENTRADA SALIDA      (Serial.print... para C251, ver obj.go)
 //
 // Parte de stc8duino. LGPL 2.1.
 package main
