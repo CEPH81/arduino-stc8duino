@@ -16,20 +16,19 @@
 /* valores con F_CPU; stcload los cambia por los de la frecuencia real */
 #define R_TICKS ((unsigned long)(F_CPU / 1000UL))
 #define R_K     ((65536000UL + R_TICKS / 2) / R_TICKS)
-__code volatile const uint8_t stc_reloj[13] = {
-	'S', 'T', 'C', 'F',
+#define R_ENT   (R_TICKS / 1000UL)
+#define R_FRAC  (((R_TICKS % 1000UL) * 256UL) / 1000UL)
+__code volatile const uint8_t stc_reloj[15] = {
+	'S', 'T', 'C', 'G',
 	(uint8_t)(F_CPU), (uint8_t)(F_CPU >> 8), (uint8_t)(F_CPU >> 16), (uint8_t)(F_CPU >> 24),
 	(uint8_t)R_TICKS, (uint8_t)(R_TICKS >> 8),
 	(uint8_t)((F_CPU + 500000UL) / 1000000UL),
-	(uint8_t)R_K, (uint8_t)(R_K >> 8)
+	(uint8_t)R_K, (uint8_t)(R_K >> 8),
+	(uint8_t)R_ENT, (uint8_t)R_FRAC
 };
 
 __data unsigned int stc_t0_ticks, stc_t0_reload;
 __data uint8_t stc_t0_tpu, us_kl, us_kh;
-/* delayMicroseconds(): cuentas por us = dus_ent + dus_frac/256 (exacto con
- * cualquier frecuencia, tambien 11,0592 o 22,1184 MHz) y tiempo fijo de la
- * llamada en us (unos 78 ciclos) */
-__data uint8_t stc_dus_ent, stc_dus_frac, stc_dus_aj;
 
 volatile __data unsigned long stc_ms_count;   /* milisegundos */
 volatile __data unsigned long stc_us_count;   /* microsegundos al inicio del milisegundo actual */
@@ -79,12 +78,6 @@ void init(void)
 	stc_t0_tpu = stc_reloj[10];
 	us_kl = stc_reloj[11];
 	us_kh = stc_reloj[12];
-	/* sin divisiones de 16 bits (no caben en el STC8G1K08): la parte entera sale
-	 * de las cuentas por us redondeadas y el resto * 256 / 1000 ~ resto * 33 / 128 */
-	stc_dus_ent = stc_t0_tpu;
-	if ((unsigned int)stc_dus_ent * 1000 > stc_t0_ticks) stc_dus_ent--;
-	stc_dus_frac = (uint8_t)(((stc_t0_ticks - (unsigned int)stc_dus_ent * 1000) * 33) >> 7);
-	stc_dus_aj = (uint8_t)(78 + (stc_dus_ent >> 1)) / stc_dus_ent;
 
 	TR0 = 0;
 	TMOD &= 0xF0;           /* T0 modo 0: 16 bits con recarga */

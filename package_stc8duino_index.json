@@ -12,6 +12,43 @@
         {
           "name": "STC8 Core by MikrocontrollerCephs",
           "architecture": "stc8",
+          "version": "0.1.37",
+          "category": "Contributed",
+          "url": "https://raw.githubusercontent.com/CEPH81/arduino-stc8duino/paquetes/stc8duino-0.1.37.tar.bz2",
+          "archiveFileName": "stc8duino-0.1.37.tar.bz2",
+          "checksum": "SHA-256:2d4c39e02fe6496b49a898e3e549ae1f35579813827b9fc311a0d0e2ee124ea4",
+          "size": "3588934",
+          "help": {
+            "online": "https://github.com/CEPH81/arduino-stc8duino"
+          },
+          "boards": [
+            {
+              "name": "STC8H8K64U (LQFP64)"
+            },
+            {
+              "name": "STC8A8K64D4 (LQFP48)"
+            },
+            {
+              "name": "STC8G1K08 (TSSOP20)"
+            },
+            {
+              "name": "STC15W4K56S4 (LQFP48)"
+            },
+            {
+              "name": "STC15F2K60S2 (LQFP44)"
+            }
+          ],
+          "toolsDependencies": [
+            {
+              "packager": "stc8duino",
+              "name": "sdcc",
+              "version": "build.14184_2"
+            }
+          ]
+        },
+        {
+          "name": "STC8 Core by MikrocontrollerCephs",
+          "architecture": "stc8",
           "version": "0.1.36",
           "category": "Contributed",
           "url": "https://raw.githubusercontent.com/CEPH81/arduino-stc8duino/paquetes/stc8duino-0.1.36.tar.bz2",
@@ -961,6 +998,34 @@
             },
             {
               "name": "STC15F2K60S2 (LQFP44)"
+            }
+          ],
+          "toolsDependencies": [
+            {
+              "packager": "stc8duino",
+              "name": "sdcc",
+              "version": "build.14184_2"
+            }
+          ]
+        },
+        {
+          "name": "STC32 Core by MikrocontrollerCephs",
+          "architecture": "stc32",
+          "version": "0.1.42",
+          "category": "Contributed",
+          "url": "https://raw.githubusercontent.com/CEPH81/arduino-stc8duino/paquetes/stc32duino-0.1.42.tar.bz2",
+          "archiveFileName": "stc32duino-0.1.42.tar.bz2",
+          "checksum": "SHA-256:fbfeae1c36215af867a5dec73de499307d950a1e900f28d842914b54d9af3c05",
+          "size": "3580388",
+          "help": {
+            "online": "https://github.com/CEPH81/arduino-stc8duino"
+          },
+          "boards": [
+            {
+              "name": "STC32G12K128 (LQFP64)"
+            },
+            {
+              "name": "STC32G12K128 (LQFP48)"
             }
           ],
           "toolsDependencies": [

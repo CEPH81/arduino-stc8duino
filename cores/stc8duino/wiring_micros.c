@@ -87,6 +87,14 @@ unsigned long micros(void)
 
 /* espera de us microsegundos. Todo en 16 bits y con las variables en la RAM
  * interna: se cuenta el temporizador 0 por tramos de hasta 1000 us. */
+/* cuentas por us = parte entera + fraccion/256, del bloque stc_reloj (las
+ * corrige stcload con la frecuencia real): exacto con cualquier frecuencia,
+ * tambien 11,0592 o 22,1184 MHz. DUS_AJ: tiempo fijo de la llamada en us
+ * (unos 78 ciclos: 3 us a 24 MHz, 7 us a 11 MHz, 2 us a 35 MHz). */
+#define DUS_ENT stc_reloj[13]
+#define DUS_FRAC stc_reloj[14]
+#define DUS_AJ ((uint8_t)((78UL * 1000000UL + F_CPU / 2) / F_CPU))
+
 #define LEER_T0(v) do { \
 		__data uint8_t h_, l_; \
 		do { h_ = TH0; l_ = TL0; } while (h_ != TH0); \
@@ -99,15 +107,15 @@ void delayMicroseconds(unsigned int us)
 
 	LEER_T0(prev);
 	n = us;
-	if (n <= stc_dus_aj) return;          /* la llamada ya tarda eso (2-3 us a 24 MHz) */
-	n -= stc_dus_aj;
+	if (n <= DUS_AJ) return;              /* la llamada ya tarda eso */
+	n -= DUS_AJ;
 	while (n) {
 		if (n > 1000) {
 			falta = T0_TICKS;                 /* 1000 us exactos */
 			n -= 1000;
 		} else {
 			/* n * (ent + frac/256), sin pasar de 16 bits */
-			falta = n * stc_dus_ent + (((n >> 2) * stc_dus_frac) >> 6);
+			falta = n * DUS_ENT + (((n >> 2) * DUS_FRAC) >> 6);
 			n = 0;
 		}
 		hecho = 0;
