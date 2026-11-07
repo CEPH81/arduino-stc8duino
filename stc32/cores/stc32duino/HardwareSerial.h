@@ -41,6 +41,8 @@ size_t Serial_newline(void);
 #define Serial__write_1(c)        Serial_write((unsigned char)(c))
 #define Serial__write_C(c)        Serial_write((unsigned char)(c))
 #define Serial__write_L(c)        Serial_write((unsigned char)(c))
+#define Serial__write_U(c)        Serial_write((unsigned char)(c))
+#define Serial__write_F(c)        Serial_write((unsigned char)(c))
 #define Serial__write_S(s)        Serial_writeStr(s)
 #define Serial__write_2(b, n)     Serial_writeBuf((const unsigned char *)(b), (n))
 
@@ -50,6 +52,8 @@ size_t Serial_newline(void);
 #define Serial__print_2(x, b)     Serial_writeStr(STC_FMT(x, b, b))
 #define Serial__print_L(x)        Serial_writeStr(stc_fmt_long((long)(x), 10))
 #define Serial__print_L2(x, b)    Serial_writeStr(stc_fmt_long((long)(x), (b)))
+#define Serial__print_U(x)        Serial_writeStr(stc_fmt_ulong((unsigned long)(x), 10))
+#define Serial__print_U2(x, b)    Serial_writeStr(stc_fmt_ulong((unsigned long)(x), (b)))
 #define Serial__print_F(x)        Serial_writeStr(stc_fmt_float((float)(x), 2))
 #define Serial__print_F2(x, d)    Serial_writeStr(stc_fmt_float((float)(x), (d)))
 
@@ -60,6 +64,8 @@ size_t Serial_newline(void);
 #define Serial__println_2(x, b)   (Serial__print_2(x, b), Serial_newline())
 #define Serial__println_L(x)      (Serial__print_L(x), Serial_newline())
 #define Serial__println_L2(x, b)  (Serial__print_L2(x, b), Serial_newline())
+#define Serial__println_U(x)      (Serial__print_U(x), Serial_newline())
+#define Serial__println_U2(x, b)  (Serial__print_U2(x, b), Serial_newline())
 #define Serial__println_F(x)      (Serial__print_F(x), Serial_newline())
 #define Serial__println_F2(x, d)  (Serial__print_F2(x, d), Serial_newline())
 

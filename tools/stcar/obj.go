@@ -6,8 +6,9 @@
 // Cambia en el sketch   Objeto.metodo(a, b)   por   Objeto__metodo_N(a, b)
 // donde N es el numero de argumentos (0, 1, 2...). En print, println y write,
 // si el primer argumento es un texto la terminacion es _S, si es una variable
-// char es _C, y si es una llamada a funcion es _L (entero) o _F (decimales),
-// para que la funcion se llame una sola vez (_L2/_F2 con un segundo argumento).
+// char es _C, y si es una llamada a funcion es _L (entero), _U (millis(),
+// micros()) o _F (decimales), para que la funcion se llame una sola vez
+// (_L2/_U2/_F2 con un segundo argumento).
 //   Serial.print("hola")   -> Serial__print_S("hola")
 //   Serial.print('A')      -> Serial__print_S("A")
 //   Serial.println(x, HEX) -> Serial__println_2(x, HEX)
@@ -37,6 +38,7 @@ var (
 	reChar     = regexp.MustCompile(`(^|[^A-Za-z0-9_])((?:un)?signed[ \t]+)?char[ \t]+([A-Za-z_][A-Za-z0-9_]*)[ \t]*(\[?)`)
 	reLlamada  = regexp.MustCompile(`[A-Za-z_][A-Za-z0-9_]*[ \t]*\(`)
 	reDecimal  = regexp.MustCompile(`float|[0-9]\.[0-9]|[0-9]\.[^0-9]`)
+	reSinSigno = regexp.MustCompile(`(^|[^A-Za-z0-9_])(millis|micros)[ \t]*\(`)
 	reIndice   = regexp.MustCompile(`^([A-Za-z_][A-Za-z0-9_]*)[ \t]*\[[^\]]*\]$`)
 	reTextoF   = regexp.MustCompile(`^F[ \t]*\([ \t]*"`)
 	reLineaDir = regexp.MustCompile(`(?m)^#line.*$`)
@@ -157,6 +159,9 @@ func (r *reescritor) tipo(a string) string {
 		if reDecimal.MatchString(a) {
 			return "F"
 		}
+		if reSinSigno.MatchString(a) {
+			return "U" // millis(), micros(): unsigned long
+		}
 		return "L"
 	}
 	return ""
@@ -249,7 +254,7 @@ func (r *reescritor) llamada(s, obj string, k int) (string, int, bool) {
 			t = "S"
 		case "S", "C":
 			t = r.tipo(a)
-		case "L", "F":
+		case "L", "F", "U":
 			t = r.tipo(a)
 			if len(args) == 2 {
 				t += "2"

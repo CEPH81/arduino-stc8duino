@@ -3,7 +3,7 @@
  *
  * pinMode, digitalWrite/Read/Toggle, millis, micros, delay, delayMicroseconds,
  * attachInterrupt (INT0/INT1), Serial, analogRead (ADC de 12 bits) y
- * analogWrite (PWM5-PWM8). Las patas se nombran P3_4, P1_0...
+ * analogWrite (PWM5-PWM8) y timer1Begin (temporizador 1). Las patas se nombran P3_4, P1_0...
  *
  * Parte de stc8duino. LGPL 2.1.
  */
@@ -160,6 +160,10 @@ void digitalToggle(uint8_t pin);
 int  analogRead(uint8_t pin);
 void analogReadResolution(uint8_t bits);
 void analogWrite(uint8_t pin, int val);
+
+/* temporizador 1: llama a func() cada periodo_us (dentro de la interrupcion) */
+void timer1Begin(unsigned long periodo_us, void (*func)(void));
+void timer1End(void);
 unsigned long millis(void);
 unsigned long micros(void);
 void delay(unsigned long ms);
