@@ -33,6 +33,9 @@ var metodosPrint = map[string]bool{"print": true, "println": true, "write": true
 // funciones de librerias que imprimen como Serial.print: lcd_print(x) -> lcd_print_T(x)
 var funcionesPrint = map[string]bool{"lcd_print": true, "oled_print": true, "tft_print": true}
 
+// funciones con varias versiones segun el numero de argumentos: random(a) -> random_1(a)
+var funcionesN = map[string]bool{"random": true}
+
 type reescritor struct {
 	textos     map[string]bool // char x[], char *x, __DATE__...
 	caracteres map[string]bool // char x
@@ -208,7 +211,7 @@ func (r *reescritor) proc(s string) string {
 				j++
 			}
 			w := s[i:j]
-			if funcionesPrint[w] && (i == 0 || (s[i-1] != '.' && s[i-1] != '>')) {
+			if (funcionesPrint[w] || funcionesN[w]) && (i == 0 || (s[i-1] != '.' && s[i-1] != '>')) {
 				if res, fin, ok := r.funcion(s, w, j); ok {
 					out.WriteString(res)
 					i = fin
@@ -245,7 +248,10 @@ func (r *reescritor) funcion(s, nombre string, k int) (string, int, bool) {
 		return "", 0, false
 	}
 	args := argumentos(r.proc(s[k+1 : q]))
-	t := r.sufijo(args)
+	t := strconv.Itoa(len(args))
+	if funcionesPrint[nombre] {
+		t = r.sufijo(args)
+	}
 	return nombre + "_" + t + "(" + strings.Join(args, ",") + ")", q + 1, true
 }
 

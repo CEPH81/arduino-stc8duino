@@ -144,6 +144,10 @@ typedef unsigned int   size_t;
 
 #include "pins_arduino.h"
 
+#define digitalPinToPort(p)    ((p) >> 4)
+#define digitalPinToBit(p)     ((p) & 7)
+#define digitalPinToBitMask(p) (1 << ((p) & 7))
+
 #define interrupts()   (EA = 1)
 #define noInterrupts() (EA = 0)
 
@@ -160,6 +164,14 @@ void digitalToggle(uint8_t pin);
 int  analogRead(uint8_t pin);
 void analogReadResolution(uint8_t bits);
 void analogWrite(uint8_t pin, int val);
+
+/* numeros pseudoaleatorios: random(max) da 0..max-1, random(min, max) min..max-1
+ * (stcar -obj cambia random(a) / random(a, b) por random_1 / random_2) */
+long stc_random(long min, long max);
+void randomSeed(unsigned long semilla);
+#define random_1(max)      stc_random(0, (max))
+#define random_2(min, max) stc_random((min), (max))
+long map(long x, long in_min, long in_max, long out_min, long out_max);
 
 /* temporizador 1: llama a func() cada periodo_us (dentro de la interrupcion) */
 void timer1Begin(unsigned long periodo_us, void (*func)(void));
