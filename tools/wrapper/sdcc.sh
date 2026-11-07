@@ -22,7 +22,19 @@ fi
 SDCC=$1
 SRC=$2
 OBJ=$3
+MODO=$4
 shift 4
+
+# SDCC con -o: en el preprocesado el IDE 2.3+ pide la salida en X.libsdetect.d
+# y SDCC no acepta esa extension (error 119): se escribe por la salida estandar
+sdcc_o() {
+	if [ "$MODO" = "pre" ]; then
+		case "$OBJ" in
+			*.d) "$SDCC" "$@" > "$OBJ"; return $? ;;
+		esac
+	fi
+	"$SDCC" "$@" -o "$OBJ"
+}
 REL=${OBJ%.o}.rel
 
 case "$SRC" in
@@ -48,12 +60,12 @@ case "$SRC" in
 				-e "t objeto" \
 				"$SRC"
 		} > "$CSRC"
-		"$SDCC" "$@" "$CSRC" -o "$OBJ"
+		sdcc_o "$@" "$CSRC"
 		ERR=$?
 		rm -f "$CSRC"
 		;;
 	*)
-		"$SDCC" "$@" "$SRC" -o "$OBJ"
+		sdcc_o "$@" "$SRC"
 		ERR=$?
 		;;
 esac

@@ -89,11 +89,12 @@ unsigned long micros(void)
  * interna: se cuenta el temporizador 0 por tramos de hasta 1000 us. */
 /* cuentas por us = parte entera + fraccion/256, del bloque stc_reloj (las
  * corrige stcload con la frecuencia real): exacto con cualquier frecuencia,
- * tambien 11,0592 o 22,1184 MHz. DUS_AJ: tiempo fijo de la llamada en us
- * (unos 78 ciclos: 3 us a 24 MHz, 7 us a 11 MHz, 2 us a 35 MHz). */
+ * tambien 11,0592 o 22,1184 MHz. DUS_AJ: tiempo fijo de la llamada mas la
+ * media vuelta de mas del lazo de espera, unos 110 ciclos (medido con
+ * PruebaTiempos a 11,0592 MHz: 10 us; 5 us a 24 MHz, 3 us a 35 MHz). */
 #define DUS_ENT stc_reloj[13]
 #define DUS_FRAC stc_reloj[14]
-#define DUS_AJ ((uint8_t)((78UL * 1000000UL + F_CPU / 2) / F_CPU))
+#define DUS_AJ ((uint8_t)((110UL * 1000000UL + F_CPU / 2) / F_CPU))
 
 #define LEER_T0(v) do { \
 		__data uint8_t h_, l_; \

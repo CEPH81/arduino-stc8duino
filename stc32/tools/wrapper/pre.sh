@@ -22,7 +22,11 @@ case "$SRC" in
 	*.merged) CSRC="${SRC}.c";  cp -f "$SRC" "$CSRC" ;;
 	*)        CSRC="$SRC" ;;
 esac
-"$SDCC" "$@" "$CSRC" -o "$OUT"
+# el IDE 2.3+ pide la salida en X.libsdetect.d y SDCC no acepta esa extension
+case "$OUT" in
+	*.d) "$SDCC" "$@" "$CSRC" > "$OUT" ;;
+	*)   "$SDCC" "$@" "$CSRC" -o "$OUT" ;;
+esac
 ERR=$?
 [ "$CSRC" != "$SRC" ] && rm -f "$CSRC"
 exit $ERR

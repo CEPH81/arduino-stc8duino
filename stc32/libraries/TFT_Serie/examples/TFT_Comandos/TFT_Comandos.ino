@@ -35,7 +35,7 @@ void loop() {
       tft_write('\r');
       tft_write('\n');
     } else {
-      tft_write(c);
+      tft_write((uint8_t)c);
     }
   }
   /* pantalla -> monitor */

@@ -596,16 +596,39 @@ func (s *stc) calibrar8() error {
 	if u == nil {
 		return errors.New("no se pudo ajustar la frecuencia")
 	}
-	pk = []byte{0x00, 0x0c}
-	for i := -6; i < 6; i++ {
-		pk = append(pk, byte(u.trim+i), byte(u.rango))
-	}
-	if r, err = s.calibracion(pk, ep2); err != nil {
-		return err
-	}
-	a, c := mejorAjuste(pk, r, obj*int(s.trimDivider))
-	if a == nil {
-		return errors.New("no se pudo ajustar la frecuencia")
+	// barrido fino de 12 valores alrededor del estimado; si el mejor queda en
+	// un borde (la estimacion cayo lejos, como paso con el STC32G a 11,0592 MHz)
+	// se vuelve a centrar en el y se repite, hasta 4 veces
+	var a *ajuste
+	var c int
+	centro := u.trim
+	for vuelta := 0; vuelta < 4; vuelta++ {
+		if centro < 6 {
+			centro = 6
+		} else if centro > 255-6 {
+			centro = 255 - 6
+		}
+		pk = []byte{0x00, 0x0c}
+		for i := -6; i < 6; i++ {
+			pk = append(pk, byte(centro+i), byte(u.rango))
+		}
+		if r, err = s.calibracion(pk, ep2); err != nil {
+			return err
+		}
+		a, c = mejorAjuste(pk, r, obj*int(s.trimDivider))
+		if a == nil {
+			return errors.New("no se pudo ajustar la frecuencia")
+		}
+		depurar("calibracion: vuelta %d, centro %d, mejor %d (cuenta %d, objetivo %d)\n",
+			vuelta, centro, a.trim, c, obj*int(s.trimDivider))
+		if a.trim > centro-6 && a.trim < centro+5 {
+			break // el mejor esta dentro de la ventana
+		}
+		if a.trim <= centro-6 {
+			centro -= 10
+		} else {
+			centro += 10
+		}
 	}
 	s.trimValue = [2]byte{byte(a.trim), byte(a.rango)}
 	s.trimFreq = pyRound(float64(c) * float64(s.hs) / float64(s.trimDivider))

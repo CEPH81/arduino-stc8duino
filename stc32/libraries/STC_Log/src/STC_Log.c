@@ -166,7 +166,7 @@ void Log_SetColors(uint8_t enable)
 static void escribir(LOG_LevelTypeDef level, const char *tag, const char *fmt, va_list ap)
 {
 	if (level == LOG_NONE || level > log_nivel) return;
-	cabecera(level, tag);
+	cabecera((uint8_t)level, tag);
 	formatear(fmt, ap);
 	fin_linea();
 }
@@ -200,7 +200,7 @@ void Log_Hex(LOG_LevelTypeDef level, const char *tag, const void *datos, unsigne
 	unsigned int i, j;
 	if (level == LOG_NONE || level > log_nivel) return;
 	for (i = 0; i < len; i += 16) {
-		cabecera(level, tag);
+		cabecera((uint8_t)level, tag);
 		sale_num(i, 16, 0, 4, '0', 1);
 		sale_texto(": ");
 		for (j = i; j < i + 16; j++) {

@@ -3,7 +3,7 @@
  * bit 0 arriba. Obtenida de la fuente X11 "koi6x9" (dominio publico).
  * Parte de stc8duino.
  */
-#include <stdint.h>
+#include <Arduino.h>      /* Keil C251 no tiene stdint.h */
 
 const uint8_t oled_fuente[95 * 5] = {
 	0x00, 0x00, 0x00, 0x00, 0x00,   /*   */

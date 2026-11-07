@@ -130,7 +130,7 @@ size_t oled_write(uint8_t c)
 		Wire_endTransmission();
 	} else {
 		for (mitad = 0; mitad < 2; mitad++) {
-			posicion(o_x, o_fila + mitad);
+			posicion(o_x, (uint8_t)(o_fila + mitad));
 			Wire_beginTransmission(o_addr);
 			Wire_write(0x40);
 			for (i = 0; i < 5; i++) {
@@ -142,7 +142,7 @@ size_t oled_write(uint8_t c)
 			Wire_write(o_inv);
 			Wire_endTransmission();
 		}
-		posicion(o_x + ancho, o_fila);
+		posicion((uint8_t)(o_x + ancho), o_fila);
 	}
 	o_x += ancho;
 	return 1;

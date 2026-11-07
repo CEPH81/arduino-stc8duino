@@ -50,9 +50,9 @@ var modelos = []modelo{
 	{"STC8G1K08", "stc8g", []uint16{0xf754, 0xf774, 0xf794, 0xf7a4}, 8192},
 	{"STC15W4K56S4", "stc15", []uint16{0xf528}, 57344},
 	{"STC15F2K60S2", "stc15", []uint16{0xf408}, 61440},
-	// STC32G: mismo cargador (BSL 7.4.4U) que el STC8H. Su codigo de modelo aun
-	// no esta confirmado: se acepta el chip que conteste y se muestra el codigo.
-	{"STC32G12K128", "stc8d", nil, 65536},
+	// STC32G: mismo cargador (BSL 7.4U) que el STC8H. F7E1 confirmado con la
+	// placa del usuario (STC32G12K128, LQFP48 y LQFP64).
+	{"STC32G12K128", "stc8d", []uint16{0xf7e1}, 65536},
 }
 
 func main() {

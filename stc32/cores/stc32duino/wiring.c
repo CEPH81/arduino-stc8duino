@@ -87,9 +87,9 @@ void delay(unsigned long ms)
 }
 
 /* DELAYUS_AJUSTE: lo que tardan la llamada y la primera lectura de micros(),
- * unos 60 ciclos (medido con PruebaTiempos: 3 us a 24 MHz, 5 us a 11,0592 MHz);
+ * unos 54 ciclos (medido con PruebaTiempos: 2 us a 24 MHz, 5 us a 11,0592 MHz);
  * a otras frecuencias se escala: 12 MHz 5 us, 35 MHz 2 us. */
-#define DELAYUS_AJUSTE ((unsigned int)((60000000UL + F_CPU / 2) / F_CPU))
+#define DELAYUS_AJUSTE ((unsigned int)((54000000UL + F_CPU / 2) / F_CPU))
 
 void delayMicroseconds(unsigned int us)
 {
