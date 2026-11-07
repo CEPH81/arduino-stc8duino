@@ -1,0 +1,59 @@
+# stc32duino - nucleo Arduino para el STC32G12K128 (80251, Keil C251)
+# --------------------------------------------------------------------
+# Compila con el Keil C251 instalado en la PC (no se distribuye con el
+# paquete: hace falta una licencia propia). Ruta por omision C:/Keil_v5/C251;
+# para otra, cree platform.local.txt junto a este archivo con:
+#     keil.c251.path=D:/Keil/C251
+# El preprocesado (prototipos y deteccion de librerias) lo hace SDCC, que
+# instala el Gestor de placas con stc8duino.
+#
+# Especificacion: https://arduino.github.io/arduino-cli/latest/platform-specification/
+
+name=STC32 Core by MikrocontrollerCephs
+version=0.1.31
+
+stc.tools.path={runtime.platform.path}/tools
+keil.c251.path=C:/Keil_v5/C251
+
+# Los scripts .sh se ejecutan con busybox en Windows
+compiler.wrapper.path={stc.tools.path}/wrapper
+compiler.wrapper.path.windows={stc.tools.path}/win/busybox.exe" ash "{stc.tools.path}/wrapper
+
+# Compilador Keil C251: modelo XSMALL, marco de interrupcion INTR2
+# (las mismas opciones que usan los proyectos de STC para el STC32G)
+compiler.c251.flags=XSMALL INTR2
+compiler.c.extra_flags=
+build.extra_flags=
+build.defines=-D{build.family} -D{build.mcu} -DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_STC32
+
+recipe.c.o.pattern="{compiler.wrapper.path}/c251.sh" "{keil.c251.path}" "{source_file}" "{object_file}" c {compiler.c251.flags} {build.defines} {compiler.c.extra_flags} {build.extra_flags} {includes}
+recipe.cpp.o.pattern="{compiler.wrapper.path}/c251.sh" "{keil.c251.path}" "{source_file}" "{object_file}" cpp {compiler.c251.flags} {build.defines} {compiler.c.extra_flags} {build.extra_flags} {includes}
+recipe.S.o.pattern="{compiler.wrapper.path}/c251.sh" "{keil.c251.path}" "{source_file}" "{object_file}" asm
+
+# Libreria del nucleo: los objetos de C251 se guardan en core.a con stcar
+recipe.ar.pattern="{compiler.wrapper.path}/ar251.sh" "{archive_file_path}" "{object_file}"
+
+# Enlace con L251 (codigo en FF0000, RAM interna 0-FFF) y .hex con OH251
+recipe.c.combine.pattern="{compiler.wrapper.path}/l251.sh" "{keil.c251.path}" "{build.path}/{build.project_name}" {object_files} "{build.path}/{archive_file}"
+
+recipe.output.tmp_file={build.project_name}.hex
+recipe.output.save_file={build.project_name}.{build.variant}.hex
+
+# Tamano: la linea "Program Size" que imprime L251
+recipe.size.pattern="{compiler.wrapper.path}/size251.sh" "{build.path}/{build.project_name}.size"
+recipe.size.regex=^FLASH\s+([0-9]+)
+recipe.size.regex.data=^RAM\s+([0-9]+)
+
+# Preprocesado con SDCC (solo el preprocesador: C251 no tiene -E ni -M)
+preproc.flags=-mmcs51 -DSTC_PREPROC
+recipe.preproc.includes="{compiler.wrapper.path}/pre.sh" "{runtime.tools.sdcc.path}/bin/sdcc" "{source_file}" "{preprocessed_file_path}" -M -MG -MP {preproc.flags} {build.defines} {includes}
+recipe.preproc.macros="{compiler.wrapper.path}/pre.sh" "{runtime.tools.sdcc.path}/bin/sdcc" "{source_file}" "{preprocessed_file_path}" -E {preproc.flags} {build.defines} {includes}
+
+# Carga por el puerto serie (cargador de la ROM de STC), igual que stc8duino
+tools.stcload.path={stc.tools.path}/linux
+tools.stcload.path.windows={stc.tools.path}/win
+tools.stcload.cmd=stcload
+tools.stcload.cmd.windows=stcload.exe
+tools.stcload.upload.params.verbose=-v
+tools.stcload.upload.params.quiet=
+tools.stcload.upload.pattern="{path}/{cmd}" {upload.verbose} -port "{serial.port}" -chip {build.mcu} -freq {build.f_cpu} -resetbaud 0 {upload.prog_flags} -hex "{build.path}/{build.project_name}.hex"

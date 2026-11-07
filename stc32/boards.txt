@@ -1,0 +1,66 @@
+# stc32duino - placas. Parte de stc8duino. LGPL 2.1.
+
+menu.clock=Reloj (oscilador interno)
+menu.prog=Programador
+
+############################################################
+stc32g12k128_64.name=STC32G12K128 (LQFP64)
+stc32g12k128_64.upload.tool=stcload
+stc32g12k128_64.upload.tool.default=stcload
+stc32g12k128_64.upload.protocol=stc
+stc32g12k128_64.upload.maximum_size=65536
+stc32g12k128_64.upload.maximum_data_size=4096
+stc32g12k128_64.build.family=STC32G
+stc32g12k128_64.build.mcu=STC32G12K128
+stc32g12k128_64.build.board=STC32G12K128
+stc32g12k128_64.build.core=stc32duino
+stc32g12k128_64.build.variant=stc32g12k128_64
+stc32g12k128_64.build.f_cpu=24000000L
+stc32g12k128_64.menu.clock.f24000=24 MHz
+stc32g12k128_64.menu.clock.f24000.build.f_cpu=24000000L
+stc32g12k128_64.menu.clock.f11059=11,0592 MHz
+stc32g12k128_64.menu.clock.f11059.build.f_cpu=11059200L
+stc32g12k128_64.menu.clock.f22118=22,1184 MHz
+stc32g12k128_64.menu.clock.f22118.build.f_cpu=22118400L
+stc32g12k128_64.menu.clock.f33177=33,1776 MHz
+stc32g12k128_64.menu.clock.f33177.build.f_cpu=33177600L
+stc32g12k128_64.menu.clock.f35000=35 MHz
+stc32g12k128_64.menu.clock.f35000.build.f_cpu=35000000L
+stc32g12k128_64.menu.clock.f12000=12 MHz
+stc32g12k128_64.menu.clock.f12000.build.f_cpu=12000000L
+stc32g12k128_64.upload.prog_flags=-prog link1d
+stc32g12k128_64.menu.prog.link1d=STC-USB Link1D (puerto CDC1)
+stc32g12k128_64.menu.prog.link1d.upload.prog_flags=-prog link1d
+stc32g12k128_64.menu.prog.serie=Adaptador USB-serie (CH340, CP2102...)
+stc32g12k128_64.menu.prog.serie.upload.prog_flags=-prog serie
+
+############################################################
+stc32g12k128_48.name=STC32G12K128 (LQFP48)
+stc32g12k128_48.upload.tool=stcload
+stc32g12k128_48.upload.tool.default=stcload
+stc32g12k128_48.upload.protocol=stc
+stc32g12k128_48.upload.maximum_size=65536
+stc32g12k128_48.upload.maximum_data_size=4096
+stc32g12k128_48.build.family=STC32G
+stc32g12k128_48.build.mcu=STC32G12K128
+stc32g12k128_48.build.board=STC32G12K128
+stc32g12k128_48.build.core=stc32duino
+stc32g12k128_48.build.variant=stc32g12k128_48
+stc32g12k128_48.build.f_cpu=24000000L
+stc32g12k128_48.menu.clock.f24000=24 MHz
+stc32g12k128_48.menu.clock.f24000.build.f_cpu=24000000L
+stc32g12k128_48.menu.clock.f11059=11,0592 MHz
+stc32g12k128_48.menu.clock.f11059.build.f_cpu=11059200L
+stc32g12k128_48.menu.clock.f22118=22,1184 MHz
+stc32g12k128_48.menu.clock.f22118.build.f_cpu=22118400L
+stc32g12k128_48.menu.clock.f33177=33,1776 MHz
+stc32g12k128_48.menu.clock.f33177.build.f_cpu=33177600L
+stc32g12k128_48.menu.clock.f35000=35 MHz
+stc32g12k128_48.menu.clock.f35000.build.f_cpu=35000000L
+stc32g12k128_48.menu.clock.f12000=12 MHz
+stc32g12k128_48.menu.clock.f12000.build.f_cpu=12000000L
+stc32g12k128_48.upload.prog_flags=-prog link1d
+stc32g12k128_48.menu.prog.link1d=STC-USB Link1D (puerto CDC1)
+stc32g12k128_48.menu.prog.link1d.upload.prog_flags=-prog link1d
+stc32g12k128_48.menu.prog.serie=Adaptador USB-serie (CH340, CP2102...)
+stc32g12k128_48.menu.prog.serie.upload.prog_flags=-prog serie

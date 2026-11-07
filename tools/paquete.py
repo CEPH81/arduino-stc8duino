@@ -3,7 +3,8 @@
 paquete.py - crea el paquete del Gestor de placas (Arduino IDE 2.x) de stc8duino.
 
 Genera en dist/:
-  - stc8duino-<version>.tar.bz2         la plataforma
+  - stc8duino-<version>.tar.bz2         la plataforma STC8/STC15 (SDCC)
+  - stc32duino-<version>.tar.bz2        la plataforma STC32G (Keil C251, carpeta stc32/)
   - package_stc8duino_index.json        indice (plataforma + SDCC)
 
 Publicacion:
@@ -44,37 +45,44 @@ SDCC = {"name": "sdcc", "version": SDCC_VER, "systems": [
 ]}
 
 
-def leer(clave):
-    for l in open(os.path.join(RAIZ, 'platform.txt'), encoding='utf-8'):
+def leer(clave, raiz=RAIZ):
+    for l in open(os.path.join(raiz, 'platform.txt'), encoding='utf-8'):
         if l.startswith(clave + '='):
             return l.split('=', 1)[1].strip()
     sys.exit('platform.txt sin ' + clave)
 
 
-def placas():
+def placas(raiz=RAIZ):
     return [{"name": m.group(1)} for m in
-            re.finditer(r'^\w+\.name=(.+)$', open(os.path.join(RAIZ, 'boards.txt'), encoding='utf-8').read(), re.M)]
+            re.finditer(r'^\w+\.name=(.+)$', open(os.path.join(raiz, 'boards.txt'), encoding='utf-8').read(), re.M)]
 
 
-def crear_tar(version):
-    nombre = '%s-%s.tar.bz2' % (PAQUETE, version)
-    tope = '%s-%s' % (PAQUETE, version)
+RAIZ32 = os.path.join(RAIZ, 'stc32')
+INCLUIR32 = [(RAIZ32, x) for x in ['boards.txt', 'platform.txt', 'cores', 'variants', 'libraries', 'tools/wrapper']] + \
+            [(RAIZ, 'tools/win'), (RAIZ, 'tools/linux')]
+
+
+def crear_tar(version, paquete=PAQUETE, incluir=None):
+    if incluir is None:
+        incluir = [(RAIZ, x) for x in INCLUIR]
+    nombre = '%s-%s.tar.bz2' % (paquete, version)
+    tope = '%s-%s' % (paquete, version)
     buf = io.BytesIO()
     with tarfile.open(fileobj=buf, mode='w', format=tarfile.GNU_FORMAT) as tar:
         archivos = []
-        for inc in INCLUIR:
-            ruta = os.path.join(RAIZ, inc)
+        for base, inc in incluir:
+            ruta = os.path.join(base, inc)
             if os.path.isfile(ruta):
-                archivos.append(inc)
+                archivos.append((base, inc))
             else:
                 for r, ds, fs in os.walk(ruta):
                     ds.sort()
                     for f in sorted(fs):
-                        archivos.append(os.path.relpath(os.path.join(r, f), RAIZ).replace(os.sep, '/'))
-        for rel in sorted(archivos):
+                        archivos.append((base, os.path.relpath(os.path.join(r, f), base).replace(os.sep, '/')))
+        for base, rel in sorted(archivos, key=lambda x: x[1]):
             if EXCLUIR.search(rel):
                 continue
-            ruta = os.path.join(RAIZ, rel)
+            ruta = os.path.join(base, rel)
             info = tar.gettarinfo(ruta, arcname=tope + '/' + rel)
             info.uid = info.gid = 0
             info.uname = info.gname = ''
@@ -92,6 +100,8 @@ def crear_tar(version):
 def main():
     version = leer('version')
     nombre, tam, sha = crear_tar(version)
+    v32 = leer('version', RAIZ32)
+    n32, t32, s32 = crear_tar(v32, 'stc32duino', INCLUIR32)
     web = "https://github.com/%s" % REPO
     indice = {"packages": [{
         "name": PAQUETE,
@@ -111,6 +121,18 @@ def main():
             "help": {"online": web},
             "boards": placas(),
             "toolsDependencies": [{"packager": PAQUETE, "name": "sdcc", "version": SDCC_VER}],
+        }, {
+            "name": leer('name', RAIZ32),
+            "architecture": "stc32",
+            "version": v32,
+            "category": "Contributed",
+            "url": BASE + n32,
+            "archiveFileName": n32,
+            "checksum": "SHA-256:" + s32,
+            "size": str(t32),
+            "help": {"online": web},
+            "boards": placas(RAIZ32),
+            "toolsDependencies": [{"packager": PAQUETE, "name": "sdcc", "version": SDCC_VER}],
         }],
         "tools": [SDCC],
     }]}
@@ -119,6 +141,7 @@ def main():
         json.dump(indice, f, indent=2, ensure_ascii=False)
         f.write('\n')
     print('Plataforma %s: %s (%d bytes, SHA-256 %s)' % (version, nombre, tam, sha))
+    print('Plataforma STC32 %s: %s (%d bytes)' % (v32, n32, t32))
     print('Indice: %s' % ruta)
 
 

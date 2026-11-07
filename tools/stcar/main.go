@@ -6,6 +6,7 @@
 // todas las funciones del nucleo sin definir).
 //
 // Uso: stcar LIBRERIA.a OBJETO.rel [OBJETO.rel...]
+//      stcar -x LIBRERIA.a CARPETA    (extrae los objetos; lo usa el nucleo STC32)
 //
 // Parte de stc8duino. LGPL 2.1.
 package main
@@ -172,6 +173,26 @@ func escribir(ruta string, ms []miembro) error {
 func main() {
 	if len(os.Args) < 3 {
 		fallo("uso: stcar LIBRERIA.a OBJETO.rel [OBJETO.rel...]")
+	}
+	if os.Args[1] == "-x" {
+		if len(os.Args) != 4 {
+			fallo("uso: stcar -x LIBRERIA.a CARPETA")
+		}
+		ms, err := leer(os.Args[2])
+		if err != nil {
+			fallo("%v", err)
+		}
+		if err := os.MkdirAll(os.Args[3], 0755); err != nil {
+			fallo("%v", err)
+		}
+		for _, m := range ms {
+			ruta := filepath.Join(os.Args[3], m.nombre)
+			if err := os.WriteFile(ruta, m.datos, 0644); err != nil {
+				fallo("%v", err)
+			}
+			fmt.Println(ruta)
+		}
+		return
 	}
 	lib := os.Args[1]
 	ms, err := leer(lib)

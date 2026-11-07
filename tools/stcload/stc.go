@@ -350,6 +350,8 @@ func (s *stc) iniciar() error {
 	switch {
 	case detectado == nil && s.modelo == nil:
 		return fmt.Errorf("chip STC con codigo %04X: no es ninguno de los modelos soportados (%s)", s.magia, nombres())
+	case detectado == nil && len(s.modelo.magias) == 0:
+		info("Aviso: codigo de modelo %04X no confirmado para el %s; se sigue con el protocolo del STC8H.\n", s.magia, s.modelo.nombre)
 	case detectado == nil:
 		return fmt.Errorf("el chip conectado (codigo %04X) no es un %s: elija la placa correcta", s.magia, s.modelo.nombre)
 	case s.modelo == nil:

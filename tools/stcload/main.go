@@ -50,6 +50,9 @@ var modelos = []modelo{
 	{"STC8G1K08", "stc8g", []uint16{0xf754, 0xf774, 0xf794, 0xf7a4}, 8192},
 	{"STC15W4K56S4", "stc15", []uint16{0xf528}, 57344},
 	{"STC15F2K60S2", "stc15", []uint16{0xf408}, 61440},
+	// STC32G: mismo cargador (BSL 7.4.4U) que el STC8H. Su codigo de modelo aun
+	// no esta confirmado: se acepta el chip que conteste y se muestra el codigo.
+	{"STC32G12K128", "stc8d", nil, 65536},
 }
 
 func main() {
@@ -186,6 +189,11 @@ func leerHex(nombre string) ([]byte, error) {
 			return nil, fmt.Errorf("%s, linea %d: suma de comprobacion", nombre, n+1)
 		}
 		dir := base + int(b[1])<<8 + int(b[2])
+		if dir >= 0xFF0000 {
+			dir -= 0xFF0000 // STC32G: la flash FF0000-FFFFFF se graba desde 0
+		} else if dir >= 0xFE0000 && b[3] == 0 {
+			return nil, fmt.Errorf("%s, linea %d: el programa usa la flash alta del STC32G (FE0000), aun no soportada", nombre, n+1)
+		}
 		switch b[3] {
 		case 0:
 			fin := dir + int(b[0])
