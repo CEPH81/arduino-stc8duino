@@ -24,6 +24,7 @@ extern volatile __data unsigned long stc_ms_count;
 extern volatile __data unsigned long stc_us_count;
 extern __data unsigned int stc_t0_ticks, stc_t0_reload;
 extern __data uint8_t stc_t0_tpu, us_kl, us_kh;
+extern __data uint8_t stc_dus_ent, stc_dus_frac, stc_dus_aj;
 
 #define T0_TICKS  stc_t0_ticks      /* cuentas por milisegundo */
 #define T0_RELOAD stc_t0_reload     /* 65536 - T0_TICKS */

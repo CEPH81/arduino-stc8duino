@@ -99,14 +99,15 @@ void delayMicroseconds(unsigned int us)
 
 	LEER_T0(prev);
 	n = us;
-	if (n <= 2) return;                   /* la llamada ya tarda alrededor de 2 us */
-	n -= 2;
+	if (n <= stc_dus_aj) return;          /* la llamada ya tarda eso (2-3 us a 24 MHz) */
+	n -= stc_dus_aj;
 	while (n) {
 		if (n > 1000) {
-			falta = 1000 * T0_TPU;
+			falta = T0_TICKS;                 /* 1000 us exactos */
 			n -= 1000;
 		} else {
-			falta = n * T0_TPU;
+			/* n * (ent + frac/256), sin pasar de 16 bits */
+			falta = n * stc_dus_ent + (((n >> 2) * stc_dus_frac) >> 6);
 			n = 0;
 		}
 		hecho = 0;

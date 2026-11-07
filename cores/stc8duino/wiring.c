@@ -26,6 +26,10 @@ __code volatile const uint8_t stc_reloj[13] = {
 
 __data unsigned int stc_t0_ticks, stc_t0_reload;
 __data uint8_t stc_t0_tpu, us_kl, us_kh;
+/* delayMicroseconds(): cuentas por us = dus_ent + dus_frac/256 (exacto con
+ * cualquier frecuencia, tambien 11,0592 o 22,1184 MHz) y tiempo fijo de la
+ * llamada en us (unos 78 ciclos) */
+__data uint8_t stc_dus_ent, stc_dus_frac, stc_dus_aj;
 
 volatile __data unsigned long stc_ms_count;   /* milisegundos */
 volatile __data unsigned long stc_us_count;   /* microsegundos al inicio del milisegundo actual */
@@ -75,6 +79,12 @@ void init(void)
 	stc_t0_tpu = stc_reloj[10];
 	us_kl = stc_reloj[11];
 	us_kh = stc_reloj[12];
+	/* sin divisiones de 16 bits (no caben en el STC8G1K08): la parte entera sale
+	 * de las cuentas por us redondeadas y el resto * 256 / 1000 ~ resto * 33 / 128 */
+	stc_dus_ent = stc_t0_tpu;
+	if ((unsigned int)stc_dus_ent * 1000 > stc_t0_ticks) stc_dus_ent--;
+	stc_dus_frac = (uint8_t)(((stc_t0_ticks - (unsigned int)stc_dus_ent * 1000) * 33) >> 7);
+	stc_dus_aj = (uint8_t)(78 + (stc_dus_ent >> 1)) / stc_dus_ent;
 
 	TR0 = 0;
 	TMOD &= 0xF0;           /* T0 modo 0: 16 bits con recarga */
