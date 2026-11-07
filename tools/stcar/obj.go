@@ -27,7 +27,7 @@ import (
 	"strings"
 )
 
-var objetos = map[string]bool{"Serial": true, "Wire": true, "EEPROM": true, "SPI": true}
+var objetos = map[string]bool{"Serial": true, "Serial3": true, "Wire": true, "EEPROM": true, "SPI": true}
 var metodosPrint = map[string]bool{"print": true, "println": true, "write": true}
 
 // funciones de librerias que imprimen como Serial.print: lcd_print(x) -> lcd_print_T(x)

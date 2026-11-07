@@ -2,6 +2,7 @@
 
 menu.clock=Reloj (oscilador interno)
 menu.prog=Programador
+menu.serial3=Serial3 (UART3, P0.0/P0.1)
 
 ############################################################
 stc32g12k128_64.name=STC32G12K128 (LQFP64)
@@ -28,6 +29,10 @@ stc32g12k128_64.menu.clock.f35000=35 MHz
 stc32g12k128_64.menu.clock.f35000.build.f_cpu=35000000L
 stc32g12k128_64.menu.clock.f12000=12 MHz
 stc32g12k128_64.menu.clock.f12000.build.f_cpu=12000000L
+stc32g12k128_64.menu.serial3.no=No (no ocupa memoria)
+stc32g12k128_64.menu.serial3.no.build.serial3=
+stc32g12k128_64.menu.serial3.si=Si (JDY-40, DT-06...)
+stc32g12k128_64.menu.serial3.si.build.serial3=-DSTC_SERIAL3
 stc32g12k128_64.upload.prog_flags=-prog link1d
 stc32g12k128_64.menu.prog.link1d=STC-USB Link1D (puerto CDC1)
 stc32g12k128_64.menu.prog.link1d.upload.prog_flags=-prog link1d
@@ -59,6 +64,10 @@ stc32g12k128_48.menu.clock.f35000=35 MHz
 stc32g12k128_48.menu.clock.f35000.build.f_cpu=35000000L
 stc32g12k128_48.menu.clock.f12000=12 MHz
 stc32g12k128_48.menu.clock.f12000.build.f_cpu=12000000L
+stc32g12k128_48.menu.serial3.no=No (no ocupa memoria)
+stc32g12k128_48.menu.serial3.no.build.serial3=
+stc32g12k128_48.menu.serial3.si=Si (JDY-40, DT-06...)
+stc32g12k128_48.menu.serial3.si.build.serial3=-DSTC_SERIAL3
 stc32g12k128_48.upload.prog_flags=-prog link1d
 stc32g12k128_48.menu.prog.link1d=STC-USB Link1D (puerto CDC1)
 stc32g12k128_48.menu.prog.link1d.upload.prog_flags=-prog link1d

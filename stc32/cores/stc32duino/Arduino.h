@@ -186,5 +186,6 @@ void loop(void);
 
 #include "stc_print.h"
 #include "HardwareSerial.h"
+#include "Serial3.h"
 
 #endif

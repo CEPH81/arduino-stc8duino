@@ -201,5 +201,6 @@ extern unsigned char runSerialEvent;
 
 #include "stc_isr.h"
 #include "HardwareSerial.h"
+#include "Serial3.h"
 
 #endif

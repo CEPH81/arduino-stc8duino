@@ -10,7 +10,7 @@
 # Especificacion: https://arduino.github.io/arduino-cli/latest/platform-specification/
 
 name=STC32 Core by MikrocontrollerCephs
-version=0.1.44
+version=0.1.45
 
 stc.tools.path={runtime.platform.path}/tools
 keil.c251.path=C:/Keil_v5/C251
@@ -24,7 +24,8 @@ compiler.wrapper.path.windows={stc.tools.path}/win/busybox.exe" ash "{stc.tools.
 compiler.c251.flags=XSMALL INTR2
 compiler.c.extra_flags=
 build.extra_flags=
-build.defines=-D{build.family} -D{build.mcu} -DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_STC32
+build.serial3=
+build.defines={build.serial3} -D{build.family} -D{build.mcu} -DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_STC32
 
 recipe.c.o.pattern="{compiler.wrapper.path}/c251.sh" "{keil.c251.path}" "{source_file}" "{object_file}" c {compiler.c251.flags} {build.defines} {compiler.c.extra_flags} {build.extra_flags} {includes}
 recipe.cpp.o.pattern="{compiler.wrapper.path}/c251.sh" "{keil.c251.path}" "{source_file}" "{object_file}" cpp {compiler.c251.flags} {build.defines} {compiler.c.extra_flags} {build.extra_flags} {includes}

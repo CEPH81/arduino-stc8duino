@@ -77,6 +77,8 @@ static __sfr __at(0x9B) S2BUF;
 static __sfr __at(0x9D) P1ASF;       /* STC15: patas analogicas */
 static __sfr __at(0xA2) P_SW1;
 static __sfr __at(0xAF) IE2;
+static __sfr __at(0xAC) S3CON;
+static __sfr __at(0xAD) S3BUF;
 static __sfr __at(0xB1) P3M1;
 static __sfr __at(0xB2) P3M0;
 static __sfr __at(0xB3) P4M1;

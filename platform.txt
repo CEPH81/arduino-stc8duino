@@ -6,7 +6,7 @@
 # Especificacion: https://arduino.github.io/arduino-cli/latest/platform-specification/
 
 name=STC8 Core by MikrocontrollerCephs
-version=0.1.38
+version=0.1.39
 
 stc.tools.path={runtime.platform.path}/tools
 
@@ -50,7 +50,8 @@ compiler.ar.extra_flags=
 build.extra_flags=
 build.isp_flags=
 
-build.defines=-D{build.family} -D{build.mcu} -DF_CPU={build.f_cpu} {build.isp_flags} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_STC8
+build.serial3=
+build.defines=-D{build.family} -D{build.mcu} -DF_CPU={build.f_cpu} {build.isp_flags} {build.serial3} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_STC8
 
 # Recetas de compilacion
 # ----------------------

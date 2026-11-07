@@ -56,7 +56,7 @@ case "$SRC" in
 				-e "s/(\.print|\.println)\([[:space:]]*'\"'[[:space:]]*\)/\1(\"\\\\\"\")/g" \
 				-e "s/(\.print|\.println)\([[:space:]]*'([^'\\\\]|\\\\.)'[[:space:]]*\)/\1(\"\2\")/g" \
 				-e ":objeto" \
-				-e "s/(^|[^A-Za-z0-9_.])(Serial|Wire|EEPROM|SPI)[[:space:]]*\.[[:space:]]*([A-Za-z_][A-Za-z0-9_]*)[[:space:]]*\(/\1\2__\3(/" \
+				-e "s/(^|[^A-Za-z0-9_.])(Serial3|Serial|Wire|EEPROM|SPI)[[:space:]]*\.[[:space:]]*([A-Za-z_][A-Za-z0-9_]*)[[:space:]]*\(/\1\2__\3(/" \
 				-e "t objeto" \
 				"$SRC"
 		} > "$CSRC"
