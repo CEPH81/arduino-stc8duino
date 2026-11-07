@@ -6,13 +6,17 @@
 #
 # - Las -D pasan a DEFINE(...) y las -I a INCDIR(...).
 # - El sketch (X.ino.cpp) se copia a X.ino.c: C251 compila C. Ademas
-#   obj251.awk cambia Serial.print(x) y demas por macros de C (sin C++).
+#   "stcar -obj" cambia Serial.print(x) y demas por macros de C (sin C++).
 # - NOPRINT: sin listado (.lst), para no escribir en la carpeta del nucleo.
 # - En Windows se ejecuta con busybox (tools/win).
 #
 # Parte de stc8duino. LGPL 2.1.
 
-AWKF="${0%/*}/obj251.awk"
+T="${0%/wrapper/*}"
+case "$(uname -s 2>/dev/null)" in
+	Linux*) STCAR="$T/linux/stcar" ;;
+	*)      STCAR="$T/win/stcar.exe" ;;
+esac
 if ! command -v cp > /dev/null 2>&1; then
 	cd "${0%/wrapper/*}"
 	PATH=$(pwd)/win:$PATH
@@ -46,9 +50,11 @@ case "$SRC" in
 	*)        CSRC="" ;;
 esac
 if [ -n "$CSRC" ]; then
-	# rutas de #line con "/" en lugar de "\\" (como las escribe el IDE en Windows)
-	# y Serial.print(...) -> Serial__print_N(...) (obj251.awk)
-	sed -e '/^#line/ s,\\\\,/,g' "$SRC" | awk -f "$AWKF" > "$CSRC"
+	# rutas de #line con "/" y Serial.print(...) -> Serial__print_N(...)
+	if ! "$STCAR" -obj "$SRC" "$CSRC" || [ ! -s "$CSRC" ]; then
+		echo "c251.sh: no se pudo preparar el sketch para C251 ($SRC)" >&2
+		exit 1
+	fi
 else
 	CSRC="$SRC"
 fi

@@ -3,7 +3,7 @@
  *
  * En el sketch se escribe como en Arduino: Serial.begin(115200);
  * Serial.print("x = "); Serial.println(x, HEX); Serial.read()...
- * Al compilar, obj251.awk cambia Serial.metodo(...) por Serial__metodo_N(...)
+ * Al compilar, "stcar -obj" cambia Serial.metodo(...) por Serial__metodo_N(...)
  * (N = numero de argumentos, o S/C/L/F segun el tipo): estas macros.
  *
  * Envio y recepcion con bufer de 64 bytes e interrupcion. Usa el temporizador 2

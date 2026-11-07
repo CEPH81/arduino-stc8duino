@@ -5,7 +5,7 @@
  * compilador resuelve al compilar:
  *   STC_ES_FLOAT(x): ((x)*0 + 1) / 2 vale 0 con enteros y 0,5 con float
  *   STC_ES_UNSIGNED(x): (x)*0 - 1 es positivo solo en unsigned int y long
- * (tools/wrapper/obj251.awk ya separo los textos, los char y las llamadas
+ * ("stcar -obj", tools/stcar/obj.go, ya separo los textos, los char y las llamadas
  * a funcion, para que x no se evalue varias veces).
  *
  * Parte de stc8duino. LGPL 2.1.

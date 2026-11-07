@@ -7,6 +7,7 @@
 //
 // Uso: stcar LIBRERIA.a OBJETO.rel [OBJETO.rel...]
 //      stcar -x LIBRERIA.a CARPETA    (extrae los objetos; lo usa el nucleo STC32)
+//      stcar -obj ENTRADA SALIDA      (Serial.print... para C251, ver obj.go)
 //
 // Parte de stc8duino. LGPL 2.1.
 package main
@@ -173,6 +174,13 @@ func escribir(ruta string, ms []miembro) error {
 func main() {
 	if len(os.Args) < 3 {
 		fallo("uso: stcar LIBRERIA.a OBJETO.rel [OBJETO.rel...]")
+	}
+	if os.Args[1] == "-obj" {
+		if len(os.Args) != 4 {
+			fallo("uso: stcar -obj ENTRADA SALIDA")
+		}
+		modoObj(os.Args[2], os.Args[3])
+		return
 	}
 	if os.Args[1] == "-x" {
 		if len(os.Args) != 4 {
