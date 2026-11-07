@@ -13,6 +13,8 @@
 //   Serial.print('A')      -> Serial__print_S("A")
 //   Serial.println(x, HEX) -> Serial__println_2(x, HEX)
 //   Serial.println()       -> Serial__println_0()
+// Lo mismo con las funciones que imprimen como Serial.print (lcd_print,
+// oled_print, tft_print): lcd_print(x) -> lcd_print_1(x).
 // Los textos y los comentarios no se tocan. Las rutas de #line pasan a "/".
 //
 // Parte de stc8duino. LGPL 2.1.
@@ -27,6 +29,9 @@ import (
 
 var objetos = map[string]bool{"Serial": true, "Wire": true, "EEPROM": true, "SPI": true}
 var metodosPrint = map[string]bool{"print": true, "println": true, "write": true}
+
+// funciones de librerias que imprimen como Serial.print: lcd_print(x) -> lcd_print_T(x)
+var funcionesPrint = map[string]bool{"lcd_print": true, "oled_print": true, "tft_print": true}
 
 type reescritor struct {
 	textos     map[string]bool // char x[], char *x, __DATE__...
@@ -145,6 +150,8 @@ func (r *reescritor) tipo(a string) string {
 	switch {
 	case strings.HasPrefix(a, `"`) || reTextoF.MatchString(a):
 		return "S"
+	case strings.Contains(a, "?") && strings.HasSuffix(a, `"`):
+		return "S" // condicion ? "texto" : "texto"
 	case strings.HasPrefix(a, "'"):
 		return "Q"
 	case r.textos[a]:
@@ -201,6 +208,13 @@ func (r *reescritor) proc(s string) string {
 				j++
 			}
 			w := s[i:j]
+			if funcionesPrint[w] && (i == 0 || (s[i-1] != '.' && s[i-1] != '>')) {
+				if res, fin, ok := r.funcion(s, w, j); ok {
+					out.WriteString(res)
+					i = fin
+					continue
+				}
+			}
 			if objetos[w] && (i == 0 || (s[i-1] != '.' && s[i-1] != '>')) {
 				if res, fin, ok := r.llamada(s, w, j); ok {
 					out.WriteString(res)
@@ -216,6 +230,45 @@ func (r *reescritor) proc(s string) string {
 		i++
 	}
 	return out.String()
+}
+
+// funcion: nombre_print ( args ) a partir de k -> nombre_print_T(args)
+func (r *reescritor) funcion(s, nombre string, k int) (string, int, bool) {
+	for k < len(s) && (s[k] == ' ' || s[k] == '\t') {
+		k++
+	}
+	if k >= len(s) || s[k] != '(' {
+		return "", 0, false
+	}
+	q := cierre(s, k)
+	if q < 0 {
+		return "", 0, false
+	}
+	args := argumentos(r.proc(s[k+1 : q]))
+	t := r.sufijo(args)
+	return nombre + "_" + t + "(" + strings.Join(args, ",") + ")", q + 1, true
+}
+
+// sufijo de print/println/write segun el primer argumento (y modifica 'x' -> "x")
+func (r *reescritor) sufijo(args []string) string {
+	t := strconv.Itoa(len(args))
+	if len(args) == 0 {
+		return t
+	}
+	a := strings.TrimSpace(args[0])
+	switch r.tipo(a) {
+	case "Q":
+		args[0] = caracterATexto(a)
+		t = "S"
+	case "S", "C":
+		t = r.tipo(a)
+	case "L", "F", "U":
+		t = r.tipo(a)
+		if len(args) == 2 {
+			t += "2"
+		}
+	}
+	return t
 }
 
 // llamada: Objeto . metodo ( args ) a partir de k (despues del nombre)
@@ -246,20 +299,8 @@ func (r *reescritor) llamada(s, obj string, k int) (string, int, bool) {
 	}
 	args := argumentos(r.proc(s[p+1 : q]))
 	t := strconv.Itoa(len(args))
-	if metodosPrint[met] && len(args) >= 1 {
-		a := strings.TrimSpace(args[0])
-		switch r.tipo(a) {
-		case "Q":
-			args[0] = caracterATexto(a)
-			t = "S"
-		case "S", "C":
-			t = r.tipo(a)
-		case "L", "F", "U":
-			t = r.tipo(a)
-			if len(args) == 2 {
-				t += "2"
-			}
-		}
+	if metodosPrint[met] {
+		t = r.sufijo(args)
 	}
 	return obj + "__" + met + "_" + t + "(" + strings.Join(args, ",") + ")", q + 1, true
 }
